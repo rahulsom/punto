@@ -1,0 +1,13 @@
+# Gradle template
+.gradle
+build/
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# JetBrains template
+.idea/
+*.iws
+*.ipr
+*.iml
+out/
+
