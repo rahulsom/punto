@@ -1,11 +1,12 @@
-package com.github.rahulsom.punto
+package com.github.rahulsom.punto.commands
 
+import com.github.rahulsom.punto.VersionProvider
 import org.slf4j.LoggerFactory
 import picocli.CommandLine
 
 @CommandLine.Command(
     name = "punto",
-    description = ["Prints the checksum (MD5 by default) of a file to STDOUT."],
+    description = ["Manages dotfiles."],
     versionProvider = VersionProvider::class
 )
 class App : Runnable {
@@ -29,12 +30,9 @@ class App : Runnable {
         logger.info("Running")
     }
 
-    val greeting: String
-        get() {
-            return "Hello world."
-        }
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) = CommandLine.run(App(), *args)
+    }
 }
 
-fun main(args: Array<String>) {
-    CommandLine.run(App(), *args)
-}

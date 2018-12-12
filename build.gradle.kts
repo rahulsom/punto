@@ -25,17 +25,18 @@ dependencies {
 
     testImplementation("org.codehaus.groovy:groovy-all:2.5.+")
     testImplementation("org.spockframework:spock-core:1.2-groovy-2.5")
+    testImplementation("org.springframework.boot:spring-boot:1.2.1.RELEASE")
 }
 
 application {
-    mainClassName = "com.github.rahulsom.punto.AppKt"
+    mainClassName = "com.github.rahulsom.punto.commands.App"
 }
 
 val createPicocliJson by tasks.creating(JavaExec::class.java) {
     dependsOn("compileKotlin")
     classpath(picocli, configurations.getByName("runtimeClasspath"), tasks.getByPath("compileKotlin").outputs)
     main = "picocli.codegen.aot.graalvm.ReflectionConfigGenerator"
-    args("-o", "build/graal-picocli.json", "com.github.rahulsom.punto.App")
+    args("-o", "build/graal-picocli.json", "com.github.rahulsom.punto.commands.App")
 }
 
 val nativeImage by tasks.creating {
