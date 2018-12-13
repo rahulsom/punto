@@ -3,23 +3,28 @@ package com.github.rahulsom.punto.commands
 import com.github.rahulsom.punto.VersionProvider
 import org.slf4j.LoggerFactory
 import picocli.CommandLine
+import picocli.CommandLine.*
 
-@CommandLine.Command(
+@Command(
     name = "punto",
     description = ["Manages dotfiles."],
-    versionProvider = VersionProvider::class
+    versionProvider = VersionProvider::class,
+    subcommands = [
+        Config::class
+    ],
+    showDefaultValues = true
 )
 class App : Runnable {
-    val logger = LoggerFactory.getLogger(App::class.java)
+    private val logger = LoggerFactory.getLogger(javaClass)
 
-    @CommandLine.Option(
+    @Option(
         names = ["-h", "--help"],
         usageHelp = true,
         description = ["Show this help message and exit."]
     )
     var helpRequested: Boolean = false
 
-    @CommandLine.Option(
+    @Option(
         names = ["-V", "--version"],
         versionHelp = true,
         description = ["Print version information and exit."]

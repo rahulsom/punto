@@ -2,5 +2,15 @@
     {
         "name": "com.github.rahulsom.punto.VersionProvider",
         "allDeclaredConstructors": true
+    },
+    {
+        "name": "com.github.rahulsom.punto.config.PuntoConfig",
+        "allDeclaredConstructors": true,
+        "allDeclaredMethods": true
+    },
+    {
+        "name": "com.github.rahulsom.punto.config.Repository",
+        "allDeclaredConstructors": true,
+        "allDeclaredMethods": true
     }
 ]

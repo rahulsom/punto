@@ -20,6 +20,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("ch.qos.logback:logback-classic:1.2.+")
     implementation("info.picocli:picocli:3.8.2")
+    implementation("org.yaml:snakeyaml:1.23")
 
     picocli("info.picocli:picocli-codegen:3.8.2")
 
@@ -54,7 +55,7 @@ val nativeImage by tasks.creating {
             commandLine(
                 "native-image",
                 "-H:+ReportUnsupportedElementsAtRuntime",
-                "-H:IncludeResources='logback.xml,version.properties'",
+                "-H:IncludeResources='logback.xml'",
                 "-H:ReflectionConfigurationFiles=$graalFiles",
                 "-H:+JNI",
                 "--no-server",
