@@ -1,5 +1,11 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
+buildscript {
+    configurations.classpath {
+        resolutionStrategy.activateDependencyLocking()
+    }
+}
+
 plugins {
     application
     id("groovy")
@@ -101,5 +107,21 @@ sourceSets {
         withConvention(KotlinSourceSet::class) {
             kotlin.srcDir("build/generatedSrc/kotlin")
         }
+    }
+}
+
+dependencyLocking {
+    lockAllConfigurations()
+}
+
+val resolveAndLockAll by tasks.creating {
+    doFirst {
+        require(gradle.startParameter.isWriteDependencyLocks)
+    }
+    doLast {
+        configurations.filter {
+            // Add any custom filtering on the configurations to be resolved
+            it.isCanBeResolved
+        }.forEach { it.resolve() }
     }
 }

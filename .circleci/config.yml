@@ -8,6 +8,27 @@ defaults: &defaults
 
 version: 2
 jobs:
+  updatelocks:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle.kts" }}
+            - v1-dependencies-
+      - run:
+          name: Update Locks
+          command: ./gradlew resolveAndLockAll --write-locks
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle.kts" }}
+      - run:
+          name: Build
+          command: ./gradlew build
+      - store_test_results:
+          path: build/test-results
+
   build:
     <<: *defaults
     steps:
@@ -18,7 +39,7 @@ jobs:
             - v1-dependencies-
       - run:
           name: Download dependencies
-          command: gradle dependencies
+          command: ./gradlew dependencies
       - save_cache:
           paths:
             - ~/.gradle
@@ -39,7 +60,7 @@ jobs:
             - v1-dependencies-
       - run:
           name: Download dependencies
-          command: gradle dependencies
+          command: ./gradlew dependencies
       - save_cache:
           paths:
             - ~/.gradle
@@ -50,6 +71,16 @@ jobs:
 
 workflows:
   version: 2
+  updatelocks:
+    jobs:
+      - updatelocks
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
   build-and-release:
     jobs:
       - build:
