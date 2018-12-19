@@ -1,5 +1,6 @@
 package com.github.rahulsom.punto.commands
 
+import com.github.rahulsom.punto.config.Repository
 import org.slf4j.LoggerFactory
 import picocli.CommandLine.Command
 import picocli.CommandLine.Mixin
@@ -24,7 +25,18 @@ class Config : Runnable {
         if (config.repositories.isNotEmpty()) {
             println()
         }
-        config.repositories.map { repository ->
+        config.repositories
+            .map(Companion::renderRepository)
+            .forEach(::println)
+
+        if (config.ignore.isNotEmpty()) {
+            println()
+            println("ignore ${config.ignore.joinToString(", ") { "'$it'" }}")
+        }
+    }
+
+    companion object {
+        fun renderRepository(repository: Repository): String {
             val sb = StringBuilder()
             sb.append(repository.mode)
 
@@ -46,18 +58,13 @@ class Config : Runnable {
                         .append("}")
                 }
             }
-            sb.toString()
-
-        }.forEach { println(it) }
-        if (config.ignore.isNotEmpty()) {
-            println()
-            println("ignore ${config.ignore.joinToString(", ") { "'$it'" }}")
+            return sb.toString()
         }
-    }
 
-    private fun mapParam(sb: StringBuilder, paramName: String, paramValue: String?) {
-        if (paramValue != null) {
-            sb.append(", $paramName: '$paramValue'")
+        private fun mapParam(sb: StringBuilder, paramName: String, paramValue: String?) {
+            if (paramValue != null) {
+                sb.append(", $paramName: '$paramValue'")
+            }
         }
     }
 }
