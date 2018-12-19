@@ -8,6 +8,16 @@ class ConfigSpec extends Specification {
     @Rule
     OutputCapture capture = new OutputCapture()
 
+    void 'print help when requested'() {
+        when:
+        App.main('config', '-h')
+
+        then:
+        capture.toString().contains('Prints configuration')
+        capture.toString().contains('-c, --configFile=<configFile>')
+        capture.toString().contains('-h, --help')
+    }
+
     void 'print error when file not found'() {
         given:
         def configFile = new File('/tmp/foo.yaml')

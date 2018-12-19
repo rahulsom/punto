@@ -26,15 +26,20 @@ class Configurable {
     )
     var configFile: File = File("${System.getProperty("user.home")}/punto.yaml")
 
-    fun getConfig() = if (configFile.exists()) {
-        val runtimeProperty = "java.runtime.name"
-        System.setProperty(runtimeProperty, System.getProperty(runtimeProperty) ?: "GraalVM")
+    fun getConfig() =
+        when {
+            configFile.exists() -> {
+                val runtimeProperty = "java.runtime.name"
+                val runtime = System.getProperty(runtimeProperty)
+                System.setProperty(runtimeProperty, runtime ?: "GraalVM")
 
-        val fileInputStream = FileInputStream(configFile)
-        val yaml = Yaml(Constructor(PuntoConfig::class.java))
-        yaml.loadAs(fileInputStream, PuntoConfig::class.java) ?: PuntoConfig()
-    } else {
-        logger.error("Could not find file $configFile")
-        null
-    }
+                val fileInputStream = FileInputStream(configFile)
+                val yaml = Yaml(Constructor(PuntoConfig::class.java))
+                yaml.loadAs(fileInputStream, PuntoConfig::class.java) ?: PuntoConfig()
+            }
+            else -> {
+                logger.error("Could not find file $configFile")
+                null
+            }
+        }
 }
