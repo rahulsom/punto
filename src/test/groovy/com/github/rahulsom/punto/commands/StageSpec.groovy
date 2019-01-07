@@ -13,11 +13,12 @@ class StageSpec extends Specification {
     void 'print help when requested'() {
         when:
         App.main('stage', '-h')
+        def output = capture.toString()
 
         then:
-        capture.toString().contains('Sets up the staging directory')
-        capture.toString().contains('-c, --configFile=<configFile>')
-        capture.toString().contains('-h, --help')
+        output.contains('Sets up the staging directory')
+        output.contains('-c, --configFile=<configFile>')
+        output.contains('-h, --help')
     }
 
     void 'print error when file not found'() {
@@ -45,12 +46,13 @@ class StageSpec extends Specification {
 
         when:
         App.main('stage', '-c', configFile.absolutePath)
+        def output = capture.toString()
 
         then:
-        capture.toString().contains("Running stage")
-        capture.toString().contains("Starting Stage")
-        capture.toString().contains("... Dotfiles Staged in ${userHome.toAbsolutePath().toString()}/.punto/staging")
-        capture.toString().contains("Finished Stage")
+        output.contains("Running stage")
+        output.contains("Starting Stage")
+        output.contains("... Dotfiles Staged in ${userHome.toAbsolutePath().toString()}/.punto/staging")
+        output.contains("Finished Stage")
 
         userHome.toFile().list().size() == 0
     }
@@ -72,12 +74,13 @@ class StageSpec extends Specification {
 
         when:
         App.main('stage', '-c', configFile.absolutePath)
+        def output = capture.toString()
 
         then:
-        capture.toString().contains("Running stage")
-        capture.toString().contains("Starting Stage")
-        capture.toString().contains("... Dotfiles Staged in ${userHome.toAbsolutePath().toString()}/.punto/staging")
-        capture.toString().contains("Finished Stage")
+        output.contains("Running stage")
+        output.contains("Starting Stage")
+        output.contains("... Dotfiles Staged in ${userHome.toAbsolutePath().toString()}/.punto/staging")
+        output.contains("Finished Stage")
 
         userHome.toFile().list().toList() == ['.punto']
         new File("${userHome.toAbsolutePath().toString()}/.punto/staging").exists()
@@ -106,12 +109,13 @@ class StageSpec extends Specification {
 
         when:
         App.main('stage', '-c', configFile.absolutePath)
+        def output = capture.toString()
 
         then:
-        capture.toString().contains("Running stage")
-        capture.toString().contains("Starting Stage")
-        capture.toString().contains("... Dotfiles Staged in ${userHome.toAbsolutePath().toString()}/.punto/staging")
-        capture.toString().contains("Finished Stage")
+        output.contains("Running stage")
+        output.contains("Starting Stage")
+        output.contains("... Dotfiles Staged in ${userHome.toAbsolutePath().toString()}/.punto/staging")
+        output.contains("Finished Stage")
 
         userHome.toFile().list().toList() == ['.punto']
         new File("${userHome.toAbsolutePath().toString()}/.punto/staging").exists()

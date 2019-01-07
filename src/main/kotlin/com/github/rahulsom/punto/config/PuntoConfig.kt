@@ -1,5 +1,6 @@
 package com.github.rahulsom.punto.config
 
+import com.github.rahulsom.punto.config.RepoType.*
 import java.security.MessageDigest
 import java.util.*
 
@@ -26,22 +27,21 @@ open class Repository {
 
     fun getUrl() =
         when (mode) {
-            RepoType.git -> repo
-            RepoType.github -> "https://github.com/$repo.git"
-            RepoType.gist -> "https://gist.github.com/$repo.git"
+            git -> repo
+            github -> "https://github.com/$repo.git"
+            gist -> "https://gist.github.com/$repo.git"
         }
 
     fun getDestination() =
-        getUrl().replace(Regex("^https?://"), "")
+        getUrl()
+            .replace(Regex("^https?://"), "")
             .replace(Regex("^git@"), "")
             .replace(Regex("\\.git$"), "")
             .replace(Regex(":"), "/")
 
 }
 
-fun String.sha1(): String {
-    val md = MessageDigest.getInstance("SHA-1")
-    val bytes = this.toByteArray()
-    val digest = md.digest(bytes)
-    return digest.fold("") { str, it -> str + "%02x".format(it) }
-}
+fun String.sha1() = MessageDigest
+    .getInstance("SHA-1")
+    .digest(this.toByteArray())
+    .fold("") { str, it -> str + "%02x".format(it) }

@@ -11,11 +11,12 @@ class ConfigSpec extends Specification {
     void 'print help when requested'() {
         when:
         App.main('config', '-h')
+        def output = capture.toString()
 
         then:
-        capture.toString().contains('Prints configuration')
-        capture.toString().contains('-c, --configFile=<configFile>')
-        capture.toString().contains('-h, --help')
+        output.contains('Prints configuration')
+        output.contains('-c, --configFile=<configFile>')
+        output.contains('-h, --help')
     }
 
     void 'print error when file not found'() {
@@ -39,10 +40,11 @@ class ConfigSpec extends Specification {
 
         when:
         App.main('config', '-c', configFile.absolutePath)
+        def output = capture.toString()
 
         then:
-        capture.toString().contains("userHome '${System.getProperty('user.home')}'")
-        capture.toString().contains("puntoHome '${System.getProperty('user.home')}/.punto'")
+        output.contains("userHome '${System.getProperty('user.home')}'")
+        output.contains("puntoHome '${System.getProperty('user.home')}/.punto'")
     }
 
     void 'print userHome correctly'() {
@@ -52,10 +54,11 @@ class ConfigSpec extends Specification {
 
         when:
         App.main('config', '-c', configFile.absolutePath)
+        def output = capture.toString()
 
         then:
-        capture.toString().contains("userHome '/tmp/loc1'")
-        capture.toString().contains("puntoHome '${System.getProperty('user.home')}/.punto'")
+        output.contains("userHome '/tmp/loc1'")
+        output.contains("puntoHome '${System.getProperty('user.home')}/.punto'")
     }
 
     void 'print puntoHome correctly'() {
@@ -65,10 +68,11 @@ class ConfigSpec extends Specification {
 
         when:
         App.main('config', '-c', configFile.absolutePath)
+        def output = capture.toString()
 
         then:
-        capture.toString().contains("userHome '${System.getProperty('user.home')}'")
-        capture.toString().contains("puntoHome '/tmp/loc2'")
+        output.contains("userHome '${System.getProperty('user.home')}'")
+        output.contains("puntoHome '/tmp/loc2'")
     }
 
     void 'print repos correctly'() {
@@ -94,14 +98,15 @@ class ConfigSpec extends Specification {
 
         when:
         App.main('config', '-c', configFile.absolutePath)
+        def output = capture.toString()
 
         then:
-        capture.toString().contains("git('https://github.com/mathiasbynens/dotfiles.git', into: '') {\n" +
+        output.contains("git('https://github.com/mathiasbynens/dotfiles.git', into: '') {\n" +
                 "    include '**/*', '!**/bin/*', '!**/foo/*.sh'\n" +
                 "}")
-        capture.toString().contains("github 'rahulsom/dotfiles', branch: 'demo'")
-        capture.toString().contains("gist '9def705d16b8995ebdefe731d5d19e5a', into: 'bin'")
-        capture.toString().contains("github 'rahulsom/dotfiles'")
+        output.contains("github 'rahulsom/dotfiles', branch: 'demo'")
+        output.contains("gist '9def705d16b8995ebdefe731d5d19e5a', into: 'bin'")
+        output.contains("github 'rahulsom/dotfiles'")
     }
 
     void 'print ignores correctly'() {
