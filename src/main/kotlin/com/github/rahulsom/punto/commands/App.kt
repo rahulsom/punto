@@ -1,21 +1,20 @@
 package com.github.rahulsom.punto.commands
 
 import com.github.rahulsom.punto.VersionProvider
-import org.slf4j.LoggerFactory
 import picocli.CommandLine
-import picocli.CommandLine.*
+import picocli.CommandLine.Command
+import picocli.CommandLine.Option
 
 @Command(
     name = "punto",
     description = ["Manages dotfiles."],
     versionProvider = VersionProvider::class,
     subcommands = [
-        Config::class, Stage::class
+        Config::class, Stage::class, Diff::class
     ],
     showDefaultValues = true
 )
 class App : Runnable {
-    private val logger = LoggerFactory.getLogger(javaClass)
 
     @Option(
         names = ["-h", "--help"],
@@ -31,13 +30,10 @@ class App : Runnable {
     )
     var versionRequested: Boolean = false
 
-    override fun run() {
-        logger.info("Running")
-    }
+    override fun run() = CommandLine.run(App(), "-h")
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) = CommandLine.run(App(), *args)
     }
 }
-

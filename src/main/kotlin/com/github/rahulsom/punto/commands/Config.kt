@@ -23,15 +23,16 @@ class Config : Runnable {
         println("userHome '${config.userHome}'")
         println("puntoHome '${config.puntoHome}'")
         if (config.repositories.isNotEmpty()) {
-            println()
+            println(
+                config.repositories
+                    .joinToString("\n", "\n", transform = Companion::renderRepository)
+            )
         }
-        config.repositories
-            .map(Companion::renderRepository)
-            .forEach(::println)
 
         if (config.ignore.isNotEmpty()) {
             println()
-            println("ignore ${config.ignore.joinToString(", ") { "'$it'" }}")
+            val ignores = config.ignore.joinToString(", ") { "'$it'" }
+            println("ignore $ignores")
         }
     }
 
@@ -51,11 +52,10 @@ class Config : Runnable {
             when {
                 repository.include.isNotEmpty() -> {
                     val includes = repository.include.joinToString(", ") { "'$it'" }
-                    sb.append(") {")
-                        .append("\n")
-                        .append("    include $includes")
-                        .append("\n")
-                        .append("}")
+                    sb.append("""
+                        |) {
+                        |    include $includes
+                        |}""".trimMargin())
                 }
             }
             return sb.toString()

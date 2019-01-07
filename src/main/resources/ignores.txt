@@ -1,0 +1,17 @@
+### Git directory from staging
+.git
+
+### Groovy
+.groovy
+!.groovy/grapeConfig.xml
+
+### SDKMan
+.sdkman
+!.sdkman/etc
+
+### Config directory
+
+# NVIM
+.config/nvim/bundle
+.config/gcloud/logs
+.config/configstore

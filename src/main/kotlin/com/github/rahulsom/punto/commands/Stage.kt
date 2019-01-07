@@ -1,7 +1,8 @@
 package com.github.rahulsom.punto.commands
 
+import com.github.rahulsom.punto.config.PuntoConfig
 import com.github.rahulsom.punto.config.Repository
-import com.github.rahulsom.punto.tasks.DirectedAcyclicalGraph
+import com.github.rahulsom.punto.tasks.Graph
 import com.github.rahulsom.punto.tasks.Task
 import com.github.rahulsom.punto.utils.ExecUtil
 import com.github.rahulsom.punto.utils.ExecUtil.exec
@@ -22,10 +23,10 @@ class Stage : Runnable {
     lateinit var configurable: Configurable
 
     override fun run() {
-        logger.info("Running stage")
         val config = configurable.getConfig() ?: return
 
-        val graph = DirectedAcyclicalGraph()
+        logger.info("Running stage")
+        val graph = Graph()
 
         val stagingDir = "${config.puntoHome}/staging"
         val stageTask = graph.createTask("Stage") {
@@ -45,21 +46,7 @@ class Stage : Runnable {
         }
 
         config.repositories.forEach { repository ->
-            val localRepo = "${config.puntoHome}/repositories/${repository.getDestination()}"
-            val cloneTask = graph.createTask("clone ${repository.getUrl()}") {
-                cloneRepository(repository.getUrl(), localRepo)
-            }
-            val checkoutTask = graph.createTask("checkout ${repository.identifier}") {
-                exec(File(localRepo), "git", "checkout", repository.branch ?: "master")
-            }
-            checkoutTask.dependsOn(cloneTask)
-            val copyTask = graph.createTask("copy from ${repository.identifier}") {
-                val destination = "$stagingDir/${repository.into ?: ""}"
-                FileUtil.copy(localRepo, destination, repository.include, config.puntoHome, config.userHome)
-                commitFiles(config.puntoHome, repository, stagingDir)
-            }
-            copyTask.dependsOn(setupStaging)
-            copyTask.dependsOn(checkoutTask)
+            val copyTask = createTasks(config, repository, graph, stagingDir, setupStaging)
             lastCopyTask?.let { copyTask.dependsOn(it) }
             lastCopyTask = copyTask
             stageTask.dependsOn(copyTask)
@@ -69,23 +56,45 @@ class Stage : Runnable {
             .groupBy { it.getUrl() }
             .filterValues { it.size > 1 }
             .values
-            .forEach { repos ->
-                lastCopyTask = null
-                repos.forEach { repository ->
-                    val checkoutTask = graph.getTask("checkout ${repository.identifier}")
-                    val copyTask = graph.getTask("copy from ${repository.identifier}")
-                    if (lastCopyTask != null) {
-                        checkoutTask!!.dependsOn(lastCopyTask!!)
-                    }
-                    lastCopyTask = copyTask
-                }
-            }
+            .forEach { setupDependencies(it, graph) }
 
         File("/tmp/graph.dot").writeText(graph.toGraphviz())
         stageTask.runTree()
     }
 
-    val cloneRepository = { url: String, checkoutDir: String ->
+    private fun setupDependencies(repos: List<Repository>, graph: Graph) {
+        var lastCopyTask: Task? = null
+        repos.forEach { repository ->
+            val checkoutTask = graph.getTask("checkout ${repository.identifier}")
+            val copyTask = graph.getTask("copy from ${repository.identifier}")
+            lastCopyTask?.let { l -> checkoutTask?.dependsOn(l) }
+            lastCopyTask = copyTask
+        }
+    }
+
+    private fun createTasks(
+        config: PuntoConfig, repository: Repository, graph: Graph, stagingDir: String,
+        setupStaging: Task
+    ): Task {
+        val localRepo = "${config.puntoHome}/repositories/${repository.getDestination()}"
+        val cloneTask = graph.createTask("clone ${repository.getUrl()}") {
+            cloneRepository(repository.getUrl(), localRepo)
+        }
+        val checkoutTask = graph.createTask("checkout ${repository.identifier}") {
+            exec(File(localRepo), "git", "checkout", repository.branch ?: "master")
+        }
+        checkoutTask.dependsOn(cloneTask)
+        val copyTask = graph.createTask("copy from ${repository.identifier}") {
+            val destination = "$stagingDir/${repository.into ?: ""}"
+            FileUtil.copy(localRepo, destination, repository.include, config.puntoHome, config.userHome)
+            commitFiles(config.puntoHome, repository, stagingDir)
+        }
+        copyTask.dependsOn(setupStaging)
+        copyTask.dependsOn(checkoutTask)
+        return copyTask
+    }
+
+    private fun cloneRepository(url: String, checkoutDir: String): ExecUtil.ProcessReturn {
         logger.info("cloneRepo $url")
         val repoDir = File(checkoutDir)
 
@@ -94,7 +103,7 @@ class Stage : Runnable {
             exec(repoDir.parentFile, "git", "clone", url, repoDir.absolutePath)
         }
 
-        exec(repoDir, "git", "fetch", "--all")
+        return exec(repoDir, "git", "fetch", "--all")
     }
 
     companion object {

@@ -9,45 +9,49 @@ class AppSpec extends Specification {
     @Rule
     OutputCapture capture = new OutputCapture()
 
-    void 'application has a greeting'() {
+    void 'application shows help if no args are passed'() {
         when:
         App.main()
+        def output = capture.toString()
 
         then:
-        capture.toString().contains('Running')
+        output.contains('Usage: punto')
     }
 
     void 'application offers help when -h is passed'() {
         when:
         App.main("-h")
+        def output = capture.toString()
 
         then:
-        capture.toString().contains('Usage: punto [-hV]')
-        capture.toString().contains('Manages dotfiles.')
-        capture.toString().contains('Show this help message and exit.')
-        capture.toString().contains('Print version information and exit.')
+        output.contains('Usage: punto [-hV]')
+        output.contains('Manages dotfiles.')
+        output.contains('Show this help message and exit.')
+        output.contains('Print version information and exit.')
     }
 
     void 'application errors when -badOption is passed'() {
         when:
         App.main("-badOption")
+        def output = capture.toString()
 
         then:
-        capture.toString().contains('Unknown option: -badOption')
-        capture.toString().contains('Usage: punto [-hV]')
-        capture.toString().contains('Manages dotfiles.')
-        capture.toString().contains('Show this help message and exit.')
-        capture.toString().contains('Print version information and exit.')
+        output.contains('Unknown option: -badOption')
+        output.contains('Usage: punto [-hV]')
+        output.contains('Manages dotfiles.')
+        output.contains('Show this help message and exit.')
+        output.contains('Print version information and exit.')
     }
 
     void 'application offers help when --help is passed'() {
         when:
         App.main("--help")
+        def output = capture.toString()
 
         then:
-        capture.toString().contains('Usage: punto [-hV]')
-        capture.toString().contains('Manages dotfiles.')
-        capture.toString().contains('Show this help message and exit.')
-        capture.toString().contains('Print version information and exit.')
+        output.contains('Usage: punto [-hV]')
+        output.contains('Manages dotfiles.')
+        output.contains('Show this help message and exit.')
+        output.contains('Print version information and exit.')
     }
 }
