@@ -15,7 +15,8 @@ class Configurable {
     @Option(
         names = ["-h", "--help"],
         usageHelp = true,
-        description = ["Show this help message and exit."]
+        description = ["Show this help message and exit."],
+        showDefaultValue = ALWAYS
     )
     var helpRequested: Boolean = false
 

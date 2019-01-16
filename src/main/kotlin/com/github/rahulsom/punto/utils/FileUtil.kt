@@ -71,18 +71,33 @@ object FileUtil {
         copyFiles(effectiveIncludes, source, destination, puntoHome, userHome)
     }
 
-}
+    class CopyVisitor(private val pathMatcher: PathMatcher, private val paths: MutableSet<Path>) :
+        SimpleFileVisitor<Path>() {
 
-class CopyVisitor(private val pathMatcher: PathMatcher, private val paths: MutableSet<Path>) :
-    SimpleFileVisitor<Path>() {
-
-    override fun visitFile(path: Path, attrs: BasicFileAttributes) =
-        CONTINUE
-            .also {
-                if (pathMatcher.matches(path)) {
-                    paths.add(path)
+        override fun visitFile(path: Path, attrs: BasicFileAttributes) =
+            CONTINUE
+                .also {
+                    if (pathMatcher.matches(path)) {
+                        paths.add(path)
+                    }
                 }
-            }
 
-    override fun visitFileFailed(file: Path, exc: IOException?) = CONTINUE
+        override fun visitFileFailed(file: Path, exc: IOException?) = CONTINUE
+    }
+
+    fun copyDirectory(from: String, to: String, name: String, skip: List<String>) {
+        val excluded = skip
+            .filter { excluded -> excluded.startsWith(name) }
+            .map { "--exclude=${it.replace(Regex("^$name"), "")}" }
+        val command = listOf("rsync", "-arv") +
+                excluded +
+                listOf("$from/$name/", "$to/$name/")
+        ExecUtil.exec(File(from), *command.toTypedArray())
+    }
+
+    fun copyFile(from: String, to: String, name: String) {
+        File("$from/$name").copyTo(File("$to/$name"), true)
+    }
+
 }
+

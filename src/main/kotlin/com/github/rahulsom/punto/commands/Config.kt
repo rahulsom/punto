@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory
 import picocli.CommandLine.Command
 import picocli.CommandLine.Mixin
 
-@Command(
-    name = "config",
-    description = ["Prints configuration"]
-)
+@Command(name = "config", description = ["Prints configuration"])
 class Config : Runnable {
     private val logger = LoggerFactory.getLogger(javaClass)
 

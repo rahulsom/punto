@@ -12,10 +12,7 @@ import picocli.CommandLine.Command
 import picocli.CommandLine.Mixin
 import java.io.File
 
-@Command(
-    name = "stage",
-    description = ["Sets up the staging directory"]
-)
+@Command(name = "stage", description = ["Sets up the staging directory"])
 class Stage : Runnable {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -73,7 +70,10 @@ class Stage : Runnable {
     }
 
     private fun createTasks(
-        config: PuntoConfig, repository: Repository, graph: Graph, stagingDir: String,
+        config: PuntoConfig,
+        repository: Repository,
+        graph: Graph,
+        stagingDir: String,
         setupStaging: Task
     ): Task {
         val localRepo = "${config.puntoHome}/repositories/${repository.getDestination()}"

@@ -38,8 +38,8 @@ dependencies {
     implementation("org.yaml:snakeyaml:1.23")
     implementation("org.slf4j:slf4j-api:1.7.25")
 
-    runtime("org.graalvm.sdk:graal-sdk:+")
-    runtime("com.oracle.substratevm:svm:+")
+    runtime("org.graalvm.sdk:graal-sdk:1.0.0-rc10")
+    runtime("com.oracle.substratevm:svm:1.0.0-rc10")
     runtime("ch.qos.logback:logback-classic:1.2.+")
     runtime("org.fusesource.jansi:jansi:1.9")
 

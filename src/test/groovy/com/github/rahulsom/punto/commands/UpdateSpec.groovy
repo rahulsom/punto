@@ -8,7 +8,7 @@ import java.nio.file.Files
 import static com.github.rahulsom.punto.commands.TestUtil.home
 import static com.github.rahulsom.punto.commands.TestUtil.stage
 
-class DiffSpec extends Specification {
+class UpdateSpec extends Specification {
 
     void 'only non ignored files are copied'() {
         given:
@@ -25,7 +25,7 @@ class DiffSpec extends Specification {
             """.stripIndent())
 
         when:
-        new Diff().diff(new PuntoConfig().tap {
+        new Update().update(new PuntoConfig().tap {
             it.userHome = userHome
             it.puntoHome = "$userHome/.punto"
 
@@ -33,10 +33,10 @@ class DiffSpec extends Specification {
         })
 
         then:
-        new File("$userHome/.punto/staging/foo/snafu").text == 'snafu-old'
-        new File("$userHome/.punto/staging/.git").text == '.git-old'
-        new File("$userHome/.punto/staging/foo/bar").text == 'bar-new'
-        !new File("$userHome/.punto/staging/src/foo").exists()
+        new File("$userHome/foo/snafu").text == 'snafu-new'
+        new File("$userHome/foo/bar").text == 'bar-old'
+        new File("$userHome/src/foo").exists()
+        !new File("$userHome/.git").exists()
     }
 
 }

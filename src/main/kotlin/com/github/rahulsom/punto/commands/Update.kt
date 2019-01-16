@@ -2,15 +2,14 @@ package com.github.rahulsom.punto.commands
 
 import com.github.rahulsom.punto.Ignores
 import com.github.rahulsom.punto.config.PuntoConfig
-import com.github.rahulsom.punto.utils.FileUtil.copyDirectory
-import com.github.rahulsom.punto.utils.FileUtil.copyFile
+import com.github.rahulsom.punto.utils.FileUtil
 import org.slf4j.LoggerFactory
 import picocli.CommandLine.Command
 import picocli.CommandLine.Mixin
 import java.io.File
 
-@Command(name = "diff", description = ["Computes diff between staging and current"])
-class Diff : Runnable {
+@Command(name = "update", description = ["Updates user home with latest staging contents."])
+class Update : Runnable {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -22,12 +21,12 @@ class Diff : Runnable {
 
         Stage().also { it.configurable = configurable }.run()
 
-        logger.info("Starting diff...")
-        diff(config)
-        logger.info("... diff complete")
+        logger.info("Starting update...")
+        update(config)
+        logger.info("... update complete")
     }
 
-    fun diff(config: PuntoConfig) {
+    fun update(config: PuntoConfig) {
         val ignores = (config.ignore + Ignores.standardIgnores).toMutableList()
         val stagingDir = "${config.puntoHome}/staging"
         File(stagingDir).list()
@@ -45,8 +44,8 @@ class Diff : Runnable {
             val file = File(config.userHome, name)
             if (file.exists()) {
                 when {
-                    file.isDirectory -> copyDirectory(config.userHome, stagingDir, name, skip)
-                    else -> copyFile(config.userHome, stagingDir, name)
+                    file.isDirectory -> FileUtil.copyDirectory(stagingDir, config.userHome, name, skip)
+                    else -> FileUtil.copyFile(stagingDir, config.userHome, name)
                 }
             }
         }

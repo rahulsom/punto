@@ -10,7 +10,7 @@ import picocli.CommandLine.Option
     description = ["Manages dotfiles."],
     versionProvider = VersionProvider::class,
     subcommands = [
-        Config::class, Stage::class, Diff::class
+        Config::class, Stage::class, Diff::class, Update::class
     ],
     showDefaultValues = true
 )
