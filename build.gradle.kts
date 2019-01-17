@@ -32,14 +32,23 @@ dependencyLocking {
     lockAllConfigurations()
 }
 
+val vmName: String = System.getProperty("java.vm.name", "GraalVM 1.0.0-rc11")
+val graalVersion =
+    when {
+        vmName.contains("GraalVM") -> vmName.split(" ")[1]
+        else -> "+"
+    }
+
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("info.picocli:picocli:3.8.2")
     implementation("org.yaml:snakeyaml:1.23")
     implementation("org.slf4j:slf4j-api:1.7.25")
 
-    runtime("org.graalvm.sdk:graal-sdk:1.0.0-rc10")
-    runtime("com.oracle.substratevm:svm:1.0.0-rc10")
+    runtime("org.graalvm.sdk:graal-sdk:$graalVersion")
+    runtime("com.oracle.substratevm:svm:$graalVersion") {
+        exclude("com.oracle.substratevm", "svm-hosted-native-windows-amd64")
+    }
     runtime("ch.qos.logback:logback-classic:1.2.+")
     runtime("org.fusesource.jansi:jansi:1.9")
 
