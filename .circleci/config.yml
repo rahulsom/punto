@@ -18,14 +18,14 @@ jobs:
             - v1-dependencies-
       - run:
           name: Update Locks
-          command: ./gradlew resolveAndLockAll --write-locks
+          command: ./gradlew resolveAndLockAll --write-locks --scan --stacktrace
       - save_cache:
           paths:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle.kts" }}
       - run:
           name: Build
-          command: ./gradlew build
+          command: ./gradlew check nativeImage --scan --stacktrace
       - store_test_results:
           path: build/test-results
 
@@ -39,35 +39,16 @@ jobs:
             - v1-dependencies-
       - run:
           name: Download dependencies
-          command: ./gradlew dependencies
+          command: ./gradlew dependencies --scan --stacktrace
       - save_cache:
           paths:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle.kts" }}
       - run:
           name: Build
-          command: ./gradlew build
+          command: ./gradlew check nativeImage --scan --stacktrace
       - store_test_results:
           path: build/test-results
-
-  release:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "build.gradle.kts" }}
-            - v1-dependencies-
-      - run:
-          name: Download dependencies
-          command: ./gradlew dependencies
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle.kts" }}
-      - run:
-          name: Publish
-          command: ./gradlew -Prelease.useLastTag=true final
 
 workflows:
   version: 2
@@ -87,11 +68,3 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - release:
-          requires:
-            - build
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/

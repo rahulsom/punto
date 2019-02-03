@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.apache.tools.ant.taskdefs.condition.Os
 
 buildscript {
     configurations.classpath {
@@ -70,32 +71,64 @@ val createPicocliJson by tasks.creating(JavaExec::class.java) {
     args("-o", "build/graal-picocli.json", "com.github.rahulsom.punto.commands.App")
 }
 
-val nativeImage: Task by tasks.creating {
+var commandParts: List<String>? = null
+val createScripts by tasks.creating {
     val shadowJarTask = tasks.getByName("shadowJar")
     dependsOn(shadowJarTask)
+
+    doLast {
+        val graalFiles = listOf(
+            "src/graal/graal-logback.json",
+            "src/graal/graal-punto.json",
+            "build/graal-picocli.json"
+        ).joinToString(",")
+
+        commandParts = listOf(
+            "native-image",
+            "-H:+ReportUnsupportedElementsAtRuntime",
+            "-H:IncludeResources='/logback.xml,/ignores.txt'",
+            "-H:ReflectionConfigurationFiles=$graalFiles",
+            "-H:+JNI",
+            "--no-server",
+            "-jar",
+            shadowJarTask.outputs.files.singleFile.absolutePath.replace(projectDir.absolutePath + "/", "")
+        )
+
+        val command = commandParts!!.map { "\"$it\"" }.joinToString(" \\\n    ")
+        File(buildDir, "build.sh").writeText("""
+            #!/bin/bash
+
+            VERSION=${'$'}(ls -1 ~/.sdkman/candidates/java | grep -v current)
+            export JAVA_HOME=~/.sdkman/candidates/java/${'$'}VERSION
+            export PATH=${'$'}PATH:${'$'}JAVA_HOME/bin
+
+        """.trimIndent())
+
+        File(buildDir, "build.sh").appendText(command + "\n\n")
+        File(buildDir, "build.sh").appendText("mv ${project.name}-$version-all build/native/${project.name}-linux" + "\n\n")
+
+    }
+}
+
+val nativeImage: Task by tasks.creating {
+    dependsOn(createScripts)
+    val shadowJarTask = tasks.getByName("shadowJar")
     inputs.files(shadowJarTask.outputs.files)
     outputs.file(file("$buildDir/native/${project.name}"))
 
-    val graalFiles = listOf(
-        "src/graal/graal-logback.json",
-        "src/graal/graal-punto.json",
-        "build/graal-picocli.json"
-    ).joinToString(",")
+
+    val suffix = when {
+        Os.isFamily(Os.FAMILY_MAC) -> "macos"
+        Os.isFamily(Os.FAMILY_UNIX) -> "unix"
+        else -> "unknown"
+    }
+
     doLast {
         exec {
-            commandLine(
-                "native-image",
-                "-H:+ReportUnsupportedElementsAtRuntime",
-                "-H:IncludeResources='/logback.xml,/ignores.txt'",
-                "-H:ReflectionConfigurationFiles=$graalFiles",
-                "-H:+JNI",
-                "--no-server",
-                "-jar",
-                shadowJarTask.outputs.files.singleFile
-            )
+            commandLine(commandParts)
         }
         file("$buildDir/native").mkdirs()
-        file("${project.name}-$version-all").renameTo(file("$buildDir/native/${project.name}"))
+        file("${project.name}-$version-all").renameTo(file("$buildDir/native/${project.name}-${suffix}"))
     }
 }
 
@@ -161,3 +194,17 @@ val resolveAndLockAll: Task  by tasks.creating {
             .forEach { it.resolve() }
     }
 }
+
+val buildImage by tasks.creating(Exec::class) {
+    commandLine("docker", "build", "-t", "rahulsom/linuxbuild", ".docker")
+}
+
+val buildLinuxVersion by tasks.creating(Exec::class) {
+    dependsOn(buildImage, tasks.getByName("shadowJar"))
+    commandLine("docker", "run",
+        "-v", "$projectDir:/home/builds/src",
+        "-v", "${System.getProperty("user.home")}/.gradle:/home/builds/.gradle",
+        "--rm", "rahulsom/linuxbuild")
+}
+
+tasks.getByName("build").dependsOn("buildLinuxVersion", "nativeImage")
