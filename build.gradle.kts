@@ -106,10 +106,12 @@ val createScripts by tasks.creating {
                 export JAVA_HOME=~/.sdkman/candidates/java/${'$'}VERSION
                 export PATH=${'$'}PATH:${'$'}JAVA_HOME/bin
 
+                mkdir -p build/native/linux
+
                 """.trimIndent()
             )
 
-        val moveCommand = "mv ${project.name}-$version-all build/native/${project.name}-linux"
+        val moveCommand = "mv '${project.name}-$version' build/native/linux/${project.name}"
         File(buildDir, "build.sh").appendText(command + "\n\n")
         File(buildDir, "build.sh").appendText(moveCommand + "\n\n")
 
@@ -117,23 +119,23 @@ val createScripts by tasks.creating {
 }
 
 val nativeImage: Task by tasks.creating {
-    dependsOn(createScripts)
-    val shadowJarTask = tasks.getByName("shadowJar")
-    inputs.files(shadowJarTask.outputs.files)
-    outputs.file(file("$buildDir/native/${project.name}"))
-
     val suffix = when {
         Os.isFamily(Os.FAMILY_MAC) -> "macos"
         Os.isFamily(Os.FAMILY_UNIX) -> "unix"
         else -> "unknown"
     }
 
+    dependsOn(createScripts)
+    val shadowJarTask = tasks.getByName("shadowJar")
+    inputs.files(shadowJarTask.outputs.files)
+    outputs.file(file("$buildDir/native/$suffix/${project.name}"))
+
     doLast {
         exec {
             commandLine(commandParts)
         }
         file("$buildDir/native").mkdirs()
-        file("${project.name}-$version-all").renameTo(file("$buildDir/native/${project.name}-${suffix}"))
+        file("${project.name}-$version").renameTo(file("$buildDir/native/$suffix/${project.name}"))
     }
 }
 
@@ -205,6 +207,10 @@ val buildImage by tasks.creating(Exec::class) {
 }
 
 val buildLinuxVersion by tasks.creating(Exec::class) {
+    val shadowJarTask = tasks.getByName("shadowJar")
+    inputs.files(shadowJarTask.outputs.files)
+    outputs.file(file("$buildDir/native/linux/${project.name}"))
+
     dependsOn(buildImage, tasks.getByName("shadowJar"), createScripts)
     commandLine(
         "docker", "run",
@@ -214,7 +220,17 @@ val buildLinuxVersion by tasks.creating(Exec::class) {
     )
 }
 
-tasks.getByName("build").dependsOn("buildLinuxVersion", "nativeImage")
+val zip by tasks.creating(Zip::class) {
+    dependsOn(nativeImage, buildLinuxVersion)
+
+    archiveName = "punto.zip"
+    destinationDir = file("$buildDir/dist")
+
+    from("$buildDir/native")
+}
+
+tasks.getByName("build").dependsOn(zip)
+
 buildScan {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"
     termsOfServiceAgree = "yes"
