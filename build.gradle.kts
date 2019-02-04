@@ -95,17 +95,21 @@ val createScripts by tasks.creating {
         )
 
         val command = commandParts!!.map { "\"$it\"" }.joinToString(" \\\n    ")
-        File(buildDir, "build.sh").writeText("""
-            #!/bin/bash
+        File(buildDir, "build.sh")
+            .writeText(
+                """
+                #!/bin/bash
 
-            VERSION=${'$'}(ls -1 ~/.sdkman/candidates/java | grep -v current)
-            export JAVA_HOME=~/.sdkman/candidates/java/${'$'}VERSION
-            export PATH=${'$'}PATH:${'$'}JAVA_HOME/bin
+                VERSION=${'$'}(ls -1 ~/.sdkman/candidates/java | grep -v current)
+                export JAVA_HOME=~/.sdkman/candidates/java/${'$'}VERSION
+                export PATH=${'$'}PATH:${'$'}JAVA_HOME/bin
 
-        """.trimIndent())
+                """.trimIndent()
+            )
 
+        val moveCommand = "mv ${project.name}-$version-all build/native/${project.name}-linux"
         File(buildDir, "build.sh").appendText(command + "\n\n")
-        File(buildDir, "build.sh").appendText("mv ${project.name}-$version-all build/native/${project.name}-linux" + "\n\n")
+        File(buildDir, "build.sh").appendText(moveCommand + "\n\n")
 
     }
 }
@@ -115,7 +119,6 @@ val nativeImage: Task by tasks.creating {
     val shadowJarTask = tasks.getByName("shadowJar")
     inputs.files(shadowJarTask.outputs.files)
     outputs.file(file("$buildDir/native/${project.name}"))
-
 
     val suffix = when {
         Os.isFamily(Os.FAMILY_MAC) -> "macos"
@@ -200,11 +203,13 @@ val buildImage by tasks.creating(Exec::class) {
 }
 
 val buildLinuxVersion by tasks.creating(Exec::class) {
-    dependsOn(buildImage, tasks.getByName("shadowJar"))
-    commandLine("docker", "run",
+    dependsOn(buildImage, tasks.getByName("shadowJar"), createScripts)
+    commandLine(
+        "docker", "run",
         "-v", "$projectDir:/home/builds/src",
         "-v", "${System.getProperty("user.home")}/.gradle:/home/builds/.gradle",
-        "--rm", "rahulsom/linuxbuild")
+        "--rm", "rahulsom/linuxbuild"
+    )
 }
 
 tasks.getByName("build").dependsOn("buildLinuxVersion", "nativeImage")
