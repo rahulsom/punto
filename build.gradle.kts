@@ -8,6 +8,8 @@ buildscript {
 }
 
 plugins {
+    id("com.gradle.build-scan") version "2.1"
+    id("me.champeau.buildscan-recipes") version "0.2.3"
     application
     id("groovy")
     id("nebula.release") version "9.1.0"
@@ -213,3 +215,13 @@ val buildLinuxVersion by tasks.creating(Exec::class) {
 }
 
 tasks.getByName("build").dependsOn("buildLinuxVersion", "nativeImage")
+buildScan {
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
+
+    publishAlways()
+}
+
+buildScanRecipes {
+    recipes("git-commit", "git-status", "teamcity", "gc-stats")
+}
