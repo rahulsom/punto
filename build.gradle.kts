@@ -274,3 +274,7 @@ artifacts {
 
 tasks.getByName("final").dependsOn("bintrayUpload")
 tasks.getByName("candidate").dependsOn("bintrayUpload")
+
+tasks.getByName("bintrayUpload").doLast {
+    println("\n\nVisit https://bintray.com/beta/#/${System.getenv("BINTRAY_USER")}/punto/punto?tab=overview to publish")
+}
