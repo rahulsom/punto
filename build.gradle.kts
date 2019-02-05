@@ -15,6 +15,7 @@ plugins {
     id("nebula.release") version "9.1.0"
     id("org.jetbrains.kotlin.jvm") version "1.3.11"
     id("com.github.johnrengelman.shadow") version "4.0.3"
+    id("com.jfrog.bintray") version "1.8.4"
 }
 
 repositories {
@@ -148,11 +149,13 @@ val runNative: Task  by tasks.creating {
     }
 }
 
-tasks.getByName("shadowJar")
-    .dependsOn("createPicocliJson")
+tasks.getByName("shadowJar").dependsOn("createPicocliJson")
 
-tasks.getByName("compileKotlin")
-    .doFirst {
+val storeVersion by tasks.creating {
+    inputs.property("version", project.version.toString())
+    outputs.file("build/generatedSrc/kotlin/com/github/rahulsom/punto/VersionProvider.kt")
+
+    doLast {
         println("Storing version $version")
         project
             .file("build/generatedSrc/kotlin/com/github/rahulsom/punto")
@@ -190,6 +193,8 @@ tasks.getByName("compileKotlin")
                 }""".trimIndent()
             )
     }
+}
+tasks.getByName("compileKotlin").dependsOn(storeVersion)
 
 val resolveAndLockAll: Task  by tasks.creating {
     doFirst {
@@ -241,3 +246,31 @@ buildScan {
 buildScanRecipes {
     recipes("git-commit", "git-status", "teamcity", "gc-stats")
 }
+
+bintray {
+    user = System.getenv("BINTRAY_USER")
+    key = System.getenv("BINTRAY_KEY")
+
+    pkg = PackageConfig().apply {
+        userOrg = System.getenv("BINTRAY_USER")
+        repo = "punto"
+        name = "punto"
+        publicDownloadNumbers = true
+
+        setLicenses("GPL-3.0")
+
+        vcsUrl = "https://github.com/bintray/gradle-bintray-plugin.git"
+
+    }
+
+    setConfigurations("distro")
+}
+
+val distro by configurations.creating
+
+artifacts {
+    add("distro", zip)
+}
+
+tasks.getByName("final").dependsOn("bintrayUpload")
+tasks.getByName("candidate").dependsOn("bintrayUpload")
