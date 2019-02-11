@@ -1,7 +1,8 @@
 FROM ubuntu
 RUN apt-get update \
     && apt-get install -y \
-    curl zip unzip bash gcc build-essential libz-dev
+        curl zip unzip bash gcc build-essential libz-dev \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN useradd -ms /bin/bash builds
 USER builds
