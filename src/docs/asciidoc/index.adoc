@@ -1,0 +1,131 @@
+= Punto
+
+_Punto_ is spanish for _dot_. Punto is a Dotfile Manager.
+
+What http://dotfiles.github.io/[dotfiles] and existing managers lack is composability.
+Punto aims to bring composability to dotfiles.
+
+== Configuration
+
+Punto can be configured using a `punto.yaml` file in your home directory.
+You can place it in a different location and pass the location using the options to the command.
+
+Here's a sample configuration
+
+[source,yaml]
+----
+include::../../../src/test/resources/sample.punto.yaml[]
+----
+
+== Usage
+
+=== Help
+
+For detailed help, run
+
+[source,bash]
+----
+punto -h
+----
+
+The resulting output is
+
+[source]
+----
+include::../../../build/output/help.txt[]
+----
+
+=== Version
+
+To see what version you're running, run
+
+[source,bash]
+----
+punto -V
+----
+
+The resulting output is
+
+[source]
+----
+include::../../../build/output/version.txt[]
+----
+
+=== Print Configuration
+
+To see your configuration in a easier to read way, you can run
+
+[source,bash]
+----
+punto config
+----
+
+The resulting output is
+
+[source,groovy]
+----
+include::../../../build/output/sample.punto.groovy[]
+----
+
+Configuration using the same format is coming soon.
+
+=== Stage Dotfiles
+
+[NOTE]
+You typically don't need to run this command.
+It is a dependency of the `diff` and `update` commands.
+
+This will build a staging directory with dotfiles assembled based on your config.
+The files are staged under `$puntoHome/staging`.
+
+You can stage dotfiles like this.
+
+[source,bash]
+----
+punto stage
+----
+
+The resulting output is
+
+[source]
+----
+include::../../../build/output/stage.txt[]
+----
+
+The staging directory is composed as a git repository.
+Each repository in your configuration is layered as a commit.
+This shows the git log of the staging directory.
+
+[source,bash]
+----
+git log --graph --oneline --decorate
+----
+
+[source,git]
+----
+include::../../../build/output/staging.gitlog.txt[]
+----
+
+The commit message tells you which commit in the source repository was layered.
+This staging directory is not intended to be used as a git repository, but git just happens to be a nice way of debugging how this directory is built.
+
+=== Diff
+
+This copies over your current dotfiles to the staging directory.
+That allows you to compute a diff using the unstaged changes.
+
+[source,bash]
+----
+punto diff
+----
+
+Now you can run `git diff` in the staging directory.
+
+=== Update
+
+This copies over contents from a newly staged directory to your home directory.
+
+[source,bash]
+----
+punto update
+----

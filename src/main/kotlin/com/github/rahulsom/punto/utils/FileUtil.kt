@@ -49,6 +49,7 @@ object FileUtil {
                 Files.walkFileTree(path, CopyVisitor(pathMatcher, files))
             }
 
+    @JvmStatic
     fun copy(
         source: String,
         destination: String,
@@ -85,6 +86,7 @@ object FileUtil {
         override fun visitFileFailed(file: Path, exc: IOException?) = CONTINUE
     }
 
+    @JvmStatic
     fun copyDirectory(from: String, to: String, name: String, skip: List<String>) {
         val excluded = skip
             .filter { excluded -> excluded.startsWith(name) }
@@ -95,6 +97,7 @@ object FileUtil {
         ExecUtil.exec(File(from), *command.toTypedArray())
     }
 
+    @JvmStatic
     fun copyFile(from: String, to: String, name: String) {
         File("$from/$name").copyTo(File("$to/$name"), true)
     }

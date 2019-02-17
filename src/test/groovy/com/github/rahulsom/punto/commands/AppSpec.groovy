@@ -1,5 +1,6 @@
 package com.github.rahulsom.punto.commands
 
+import com.github.rahulsom.punto.VersionProvider
 import org.junit.Rule
 import org.springframework.boot.test.OutputCapture
 import spock.lang.Specification
@@ -22,12 +23,23 @@ class AppSpec extends Specification {
         when:
         App.main("-h")
         def output = capture.toString()
+        new File('build/output/help.txt').text = output
 
         then:
         output.contains('Usage: punto [-hV]')
         output.contains('Manages dotfiles.')
         output.contains('Show this help message and exit.')
         output.contains('Print version information and exit.')
+    }
+
+    void 'application prints version when -V is passed'() {
+        when:
+        App.main("-V")
+        def output = capture.toString()
+        new File('build/output/version.txt').text = output
+
+        then:
+        output.trim() == new VersionProvider().version[0]
     }
 
     void 'application errors when -badOption is passed'() {

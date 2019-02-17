@@ -10,6 +10,7 @@ object ExecUtil {
 
     private val logger = LoggerFactory.getLogger(javaClass.canonicalName)
 
+    @JvmStatic
     fun exec(workingDir: File, vararg command: String): ProcessReturn {
         val out = File.createTempFile("punto", "out.txt")
         val err = File.createTempFile("punto", "err.txt")

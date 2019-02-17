@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.asciidoctor.gradle.AsciidoctorTask
 
 buildscript {
     configurations.classpath {
@@ -16,6 +17,8 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.11"
     id("com.github.johnrengelman.shadow") version "4.0.3"
     id("com.jfrog.bintray") version "1.8.4"
+    id("org.asciidoctor.convert") version "1.5.9.2"
+    id("org.ajoberstar.git-publish") version "2.0.0"
 }
 
 repositories {
@@ -23,6 +26,7 @@ repositories {
 }
 
 val picocli: Configuration by configurations.creating
+val distro by configurations.creating
 
 sourceSets {
     main {
@@ -61,6 +65,7 @@ dependencies {
     testImplementation("org.codehaus.groovy:groovy-all:2.5.+")
     testImplementation("org.spockframework:spock-core:1.2-groovy-2.5")
     testImplementation("org.springframework.boot:spring-boot:1.2.1.RELEASE")
+    testImplementation("org.apache.commons:commons-text:1.6")
 }
 
 application {
@@ -247,34 +252,61 @@ buildScanRecipes {
     recipes("git-commit", "git-status", "teamcity", "gc-stats")
 }
 
+val bintrayUser = System.getenv("BINTRAY_USER")
+val bintrayKey = System.getenv("BINTRAY_KEY")
+
 bintray {
-    user = System.getenv("BINTRAY_USER")
-    key = System.getenv("BINTRAY_KEY")
+    user = bintrayUser
+    key = bintrayKey
 
     pkg = PackageConfig().apply {
-        userOrg = System.getenv("BINTRAY_USER")
+        userOrg = bintrayUser
         repo = "punto"
         name = "punto"
         publicDownloadNumbers = true
 
         setLicenses("GPL-3.0")
-
         vcsUrl = "https://github.com/bintray/gradle-bintray-plugin.git"
-
     }
 
     setConfigurations("distro")
 }
 
-val distro by configurations.creating
 
 artifacts {
     add("distro", zip)
 }
 
-tasks.getByName("final").dependsOn("bintrayUpload")
+tasks.getByName("final").dependsOn("bintrayUpload", "gitPublishPush")
 tasks.getByName("candidate").dependsOn("bintrayUpload")
 
 tasks.getByName("bintrayUpload").doLast {
-    println("\n\nVisit https://bintray.com/beta/#/${System.getenv("BINTRAY_USER")}/punto/punto?tab=overview to publish")
+    println("\n\nVisit https://bintray.com/beta/#/$bintrayUser/punto/punto?tab=overview to publish")
 }
+
+tasks.getByName("testClasses").doLast {
+    project.file("build/output").mkdirs()
+}
+
+tasks.getByName("test").outputs.dirs("build/output", "build/resources/test")
+
+tasks.withType<AsciidoctorTask> {
+    attributes(mapOf(
+        "toc" to "left",
+        "icons" to "font",
+        "docinfo" to "shared"
+    ))
+    inputs.dir("build/output")
+    dependsOn("test")
+}
+
+gitPublish {
+    repoUri.set("git@github.com:rahulsom/punto.git")
+    branch.set("gh-pages")
+
+    contents {
+        from("build/asciidoc/html5")
+    }
+}
+
+tasks.getByName("gitPublishCopy").dependsOn("asciidoctor")

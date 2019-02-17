@@ -1,8 +1,12 @@
 package com.github.rahulsom.punto.commands
 
+import org.apache.commons.text.WordUtils
 import org.junit.Rule
 import org.springframework.boot.test.OutputCapture
 import spock.lang.Specification
+import spock.lang.Timeout
+
+import java.util.concurrent.TimeUnit
 
 class ConfigSpec extends Specification {
     @Rule
@@ -75,30 +79,23 @@ class ConfigSpec extends Specification {
         output.contains("puntoHome '/tmp/loc2'")
     }
 
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void 'print repos correctly'() {
         given:
         def configFile = new File('/tmp/foo.yaml')
-        configFile.text = '''\
-            repositories:
-              - mode: git
-                repo: https://github.com/mathiasbynens/dotfiles.git
-                include:
-                  - '**/*\'
-                  - '!**/bin/*\'
-                  - '!**/foo/*.sh\'
-                into: \'\'
-              - mode: github
-                repo: rahulsom/dotfiles
-                branch: demo
-              - mode: gist
-                repo: 9def705d16b8995ebdefe731d5d19e5a
-                into: bin
-              - mode: github
-                repo: rahulsom/dotfiles'''
+        configFile.text = this.class.getResourceAsStream('/sample.punto.yaml').text
 
         when:
         App.main('config', '-c', configFile.absolutePath)
         def output = capture.toString()
+        new File('build/output/sample.punto.groovy').text =
+                output.split('\n').
+                        collect {
+                            WordUtils.
+                                    wrap("|$it", 80, '\n        ', true).
+                                    replaceAll("^\\|", '')
+                        }.
+                        join('\n')
 
         then:
         output.contains("git('https://github.com/mathiasbynens/dotfiles.git', into: '') {\n" +

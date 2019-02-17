@@ -1,5 +1,6 @@
 package com.github.rahulsom.punto.commands
 
+import com.github.rahulsom.punto.utils.ExecUtil
 import org.junit.Rule
 import org.springframework.boot.test.OutputCapture
 import spock.lang.Specification
@@ -49,10 +50,7 @@ class StageSpec extends Specification {
         def output = capture.toString()
 
         then:
-        output.contains("Running stage")
-        output.contains("Starting Stage")
         output.contains("... Dotfiles Staged in ${userHome.toAbsolutePath().toString()}/.punto/staging")
-        output.contains("Finished Stage")
 
         userHome.toFile().list().size() == 0
     }
@@ -77,10 +75,7 @@ class StageSpec extends Specification {
         def output = capture.toString()
 
         then:
-        output.contains("Running stage")
-        output.contains("Starting Stage")
         output.contains("... Dotfiles Staged in ${userHome.toAbsolutePath().toString()}/.punto/staging")
-        output.contains("Finished Stage")
 
         userHome.toFile().list().toList() == ['.punto']
         new File("${userHome.toAbsolutePath().toString()}/.punto/staging").exists()
@@ -94,34 +89,37 @@ class StageSpec extends Specification {
         def configFile = new File('/tmp/foo.yaml')
         def userHome = Files.createTempDirectory("userhome")
 
+        def USERHOME = userHome.toAbsolutePath().toString()
+
         configFile.text = """\
-            userHome: ${userHome.toAbsolutePath().toString()}
-            puntoHome: ${userHome.toAbsolutePath().toString()}/.punto
-            repositories:
-            - mode: git
-              repo: https://github.com/mathiasbynens/dotfiles.git
-              include:
-              - '!**/bin/subl'
-            - mode: github
-              repo: rahulsom/dotfiles
-              branch: demo
-        """.stripIndent()
+            userHome: ${USERHOME}
+            puntoHome: ${USERHOME}/.punto
+        """.stripIndent() + "\n" + this.class.getResourceAsStream('/sample.punto.yaml').text
 
         when:
         App.main('stage', '-c', configFile.absolutePath)
         def output = capture.toString()
+        new File("build/output/stage.txt").text = output.replace(USERHOME, "~")
 
         then:
-        output.contains("Running stage")
-        output.contains("Starting Stage")
-        output.contains("... Dotfiles Staged in ${userHome.toAbsolutePath().toString()}/.punto/staging")
-        output.contains("Finished Stage")
+        output.contains("... Dotfiles Staged in ${USERHOME}/.punto/staging")
 
         userHome.toFile().list().toList() == ['.punto']
-        new File("${userHome.toAbsolutePath().toString()}/.punto/staging").exists()
-        new File("${userHome.toAbsolutePath().toString()}/.punto/repositories").exists()
-        new File("${userHome.toAbsolutePath().toString()}/.punto/repositories").list().length == 1
-        new File("${userHome.toAbsolutePath().toString()}/.punto/repositories/github.com").list().length == 2
+        new File("${USERHOME}/.punto/staging").exists()
+        new File("${USERHOME}/.punto/repositories").exists()
+        new File("${USERHOME}/.punto/repositories").list().length == 2
+        new File("${USERHOME}/.punto/repositories/gist.github.com").list().length == 1
+        new File("${USERHOME}/.punto/repositories/github.com").list().length == 2
+
+        when:
+        def ret = ExecUtil.exec(new File("${USERHOME}/.punto/staging"),
+                "git", "log", "--graph", "--oneline", "--decorate"
+        )
+        new File("build/output/staging.gitlog.txt").text = ret.err
+
+        then:
+        ret.err.split("\n").length == 4
+
     }
 
 }
