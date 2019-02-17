@@ -4,9 +4,6 @@ import org.apache.commons.text.WordUtils
 import org.junit.Rule
 import org.springframework.boot.test.OutputCapture
 import spock.lang.Specification
-import spock.lang.Timeout
-
-import java.util.concurrent.TimeUnit
 
 class ConfigSpec extends Specification {
     @Rule
@@ -79,7 +76,6 @@ class ConfigSpec extends Specification {
         output.contains("puntoHome '/tmp/loc2'")
     }
 
-    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void 'print repos correctly'() {
         given:
         def configFile = new File('/tmp/foo.yaml')
