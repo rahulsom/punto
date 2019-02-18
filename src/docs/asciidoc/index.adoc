@@ -5,6 +5,17 @@ _Punto_ is spanish for _dot_. Punto is a Dotfile Manager.
 What http://dotfiles.github.io/[dotfiles] and existing managers lack is composability.
 Punto aims to bring composability to dotfiles.
 
+== Installing
+
+On MacOS, you can use https://brew.sh/[homebrew] to install punto.
+
+[source,bash]
+----
+brew install rahulsom/homebrew-rahulsom/punto
+----
+
+On Linux, you can download directly from https://bintray.com/rahulsom/punto/punto[bintray].
+
 == Configuration
 
 Punto can be configured using a `punto.yaml` file in your home directory.

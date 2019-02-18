@@ -1,12 +1,19 @@
 image::https://api.bintray.com/packages/rahulsom/punto/punto/images/download.svg?version=latest[link="https://bintray.com/rahulsom/punto/punto"]]
 = Punto
 
-Dotfile Manager for Posix systems. Check out the docs Check out the docs https://rahulsom.github.io/punto/[here].
+Dotfile Manager for Posix systems. Check out the docs https://rahulsom.github.io/punto/[here].
 
 == Why do we need another dotfile manager?
 
 What dotfiles and existing managers lack is composability.
 Punto aims to bring composability to dotfiles.
+
+== Installing on MacOS
+
+[source,bash]
+----
+brew install rahulsom/homebrew-rahulsom/punto
+----
 
 == Building
 
@@ -19,14 +26,10 @@ Punto aims to bring composability to dotfiles.
 [source,bash]
 ----
 ./gradlew final -Prelease.scope=major|minor|patch
-cp build/punto.rb /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula
-cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula
-git branch -D punto
-git push rahulsom :punto
-git checkout -b punto
+cp build/punto.rb /usr/local/Homebrew/Library/Taps/rahulsom/homebrew-rahulsom/Formula
+cd /usr/local/Homebrew/Library/Taps/rahulsom/homebrew-rahulsom/Formula
 git add .
 git commit -m "Upgrade punto version"
-git push rahulsom punto
-git checkout master
+git push origin master
 cd -
 ----
