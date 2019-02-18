@@ -1,66 +1,15 @@
+image::https://api.bintray.com/packages/rahulsom/punto/punto/images/download.svg?version=latest[link="https://bintray.com/rahulsom/punto/punto"]]
 = Punto
 
-Dotfile Manager for Posix systems
-
-== Is this ready?
-
-No. It's a long way from ready.
+Dotfile Manager for Posix systems. Check out the docs Check out the docs https://rahulsom.github.io/punto/[here].
 
 == Why do we need another dotfile manager?
 
 What dotfiles and existing managers lack is composability.
 Punto aims to bring composability to dotfiles.
 
-== How does this work?
+== Building
 
-This is an example of what the configuration looks like.
-
-[source,yaml]
-----
-repositories:
-  - mode: git
-    repo: https://github.com/mathiasbynens/dotfiles.git
-    include:
-      - '**/*'
-      - '!**/bin/*'
-      - '!**/foo/*.sh'
-    into: ''
-  - mode: github
-    repo: rahulsom/dotfiles
-    branch: demo
-  - mode: gist
-    repo: 9def705d16b8995ebdefe731d5d19e5a
-    into: bin
-  - mode: github
-    repo: rahulsom/dotfiles
-ignore:
-  - .git
-  - bin/jvm.sh
-  - bin/git-changelog
-  - .sdkman/candidates
-----
-
-This is an alternative way to look at it.
-It assumes a groovy editor could support it.
-
-[source,groovy]
-----
-userHome '/Users/rahul'
-puntoHome '/Users/rahul/.punto'
-
-git('https://github.com/mathiasbynens/dotfiles.git') {
-    include '**/*', '!**/bin/*', '!**/foo/*.sh'
-}
-github 'rahulsom/dotfiles', branch: 'demo'
-gist '9def705d16b8995ebdefe731d5d19e5a', into: 'bin'
-github 'rahulsom/dotfiles'
-ignore '.git', 'bin/jvm.sh', 'bin/git-changelog', '.sdkman/candidates'
-----
-
-Punto clones git repos, checks out the right branch and pulls relevant files from each of these into a git repository (the staging repo).
-This repo has git commits that help with traceability.
-And this repo is your effective dotfiles.
-This then gets copied to the right place.
-
-The benefit of this approach is, punto can help you update the last layer of your repo.
-Most importantly, this allows you to pull things from well managed dotfile repos and layer customizations on top.
+. Checkout the code
+. Switch JDK to graalvm
+. Run `./gradlew build`
