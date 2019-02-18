@@ -440,6 +440,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
+<li><a href="#_installing">Installing</a></li>
 <li><a href="#_configuration">Configuration</a></li>
 <li><a href="#_usage">Usage</a>
 <ul class="sectlevel2">
@@ -463,6 +464,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>What <a href="http://dotfiles.github.io/">dotfiles</a> and existing managers lack is composability.
 Punto aims to bring composability to dotfiles.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_installing">Installing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>On MacOS, you can use <a href="https://brew.sh/">homebrew</a> to install punto.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">brew install rahulsom/homebrew-rahulsom/punto</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>On Linux, you can download directly from <a href="https://bintray.com/rahulsom/punto/punto">bintray</a>.</p>
 </div>
 </div>
 </div>
@@ -572,8 +589,8 @@ Commands:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">userHome '/Users/rahul'
-puntoHome '/Users/rahul/.punto'
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">userHome '/Users/rsomasunderam'
+puntoHome '/Users/rsomasunderam/.punto'
 
 git('https://github.com/mathiasbynens/dotfiles.git', into: '') {
     include '**/*', '!**/bin/*', '!**/foo/*.sh'
@@ -637,10 +654,10 @@ This shows the git log of the staging directory.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-git" data-lang="git">* 00bf507 (HEAD -&gt; master) Add github repo 'rahulsom/dotfiles' commit d23716a5
-* 33ec43c Add gist repo '9def705d16b8995ebdefe731d5d19e5a' commit 6e1c081c
-* 1d86301 Add github repo 'rahulsom/dotfiles' commit a6740352
-* 831b393 Add git repo 'https://github.com/mathiasbynens/dotfiles.git' commit 1b9145bb</code></pre>
+<pre class="highlight"><code class="language-git" data-lang="git">* 69f2122 (HEAD -&gt; master) Add github repo 'rahulsom/dotfiles' commit d23716a5
+* 33ef8df Add gist repo '9def705d16b8995ebdefe731d5d19e5a' commit 6e1c081c
+* 56ea6cf Add github repo 'rahulsom/dotfiles' commit a6740352
+* 7d7b9f6 Add git repo 'https://github.com/mathiasbynens/dotfiles.git' commit 1b9145bb</code></pre>
 </div>
 </div>
 <div class="paragraph">
