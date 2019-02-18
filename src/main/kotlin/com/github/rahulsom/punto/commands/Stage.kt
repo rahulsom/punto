@@ -122,6 +122,14 @@ class Stage : Runnable {
             val repoDsl = "```\n${Config.renderRepository(repository)}\n```"
             val message = listOf(title, repoDsl, commitDescription).joinToString("\n\n")
 
+            val userName = ExecUtil.exec(File(stagingDir), "git", "config", "user.name")
+            val userEmail = ExecUtil.exec(File(stagingDir), "git", "config", "user.email")
+            if (userName.err.trim() == "") {
+                ExecUtil.exec(File(stagingDir), "git", "config", "user.name", "Punto")
+            }
+            if (userEmail.err.trim() == "") {
+                ExecUtil.exec(File(stagingDir), "git", "config", "user.email", "punto@example.com")
+            }
             ExecUtil.exec(File(stagingDir), "git", "commit", "--allow-empty", "-m", message)
         }
     }
