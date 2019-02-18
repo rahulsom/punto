@@ -67,4 +67,5 @@ workflows:
       - build:
           filters:
             branches:
-              only: /^(gh-pages)/
+              ignore:
+                - gh-pages
