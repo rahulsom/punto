@@ -502,6 +502,10 @@ ignore:
   - .config/doctl</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>It&#8217;s a good idea to list your personal repository the last in the list of repositories.
+That helps the <code>diff</code> command suggest changes to your personal repo based on changes you have made locally.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -549,7 +553,7 @@ Commands:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>0.1.0-rc.2</code></pre>
+<pre class="highlight"><code>0.1.0</code></pre>
 </div>
 </div>
 </div>
@@ -633,10 +637,10 @@ This shows the git log of the staging directory.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-git" data-lang="git">* b757041 (HEAD -&gt; master) Add github repo 'rahulsom/dotfiles' commit d23716a5
-* a124d14 Add gist repo '9def705d16b8995ebdefe731d5d19e5a' commit 6e1c081c
-* 737cd78 Add github repo 'rahulsom/dotfiles' commit a6740352
-* 5a320f1 Add git repo 'https://github.com/mathiasbynens/dotfiles.git' commit 1b9145bb</code></pre>
+<pre class="highlight"><code class="language-git" data-lang="git">* 00bf507 (HEAD -&gt; master) Add github repo 'rahulsom/dotfiles' commit d23716a5
+* 33ec43c Add gist repo '9def705d16b8995ebdefe731d5d19e5a' commit 6e1c081c
+* 1d86301 Add github repo 'rahulsom/dotfiles' commit a6740352
+* 831b393 Add git repo 'https://github.com/mathiasbynens/dotfiles.git' commit 1b9145bb</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -656,7 +660,17 @@ That allows you to compute a diff using the unstaged changes.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Now you can run <code>git diff</code> in the staging directory.</p>
+<p>The output is</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>... Dotfiles Staged in ~/.punto/staging
+... Diff updated in ~/.punto/staging and ~/.punto/repositories/github.com/rahulsom/dotfiles</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now you can run <code>git diff</code> in the staging directory to see how your dotfiles are different from your staging directory.
+If you want to update your personal repo based on this, you can see what&#8217;s in the checked out personal repo under <code>~/.punto/repositories</code> and commit those changes.</p>
 </div>
 </div>
 <div class="sect2">
@@ -669,13 +683,21 @@ That allows you to compute a diff using the unstaged changes.</p>
 <pre class="highlight"><code class="language-bash" data-lang="bash">punto update</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>The output is</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>... Dotfiles Staged in ~/.punto/staging
+... Dotfiles Updated in ~</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That&#8217;s it. You&#8217;re set to go.
+You might have to reload your shell for the changes to take effect.</p>
 </div>
 </div>
 </div>
-</div>
-<div id="footer">
-<div id="footer-text">
-Last updated 2019-02-16 16:47:18 -0800
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
