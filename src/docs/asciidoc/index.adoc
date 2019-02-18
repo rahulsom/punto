@@ -17,6 +17,9 @@ Here's a sample configuration
 include::../../../src/test/resources/sample.punto.yaml[]
 ----
 
+It's a good idea to list your personal repository the last in the list of repositories.
+That helps the `diff` command suggest changes to your personal repo based on changes you have made locally.
+
 == Usage
 
 === Help
@@ -119,7 +122,15 @@ That allows you to compute a diff using the unstaged changes.
 punto diff
 ----
 
-Now you can run `git diff` in the staging directory.
+The output is
+
+[source]
+----
+include::../../../build/output/diff.txt[]
+----
+
+Now you can run `git diff` in the staging directory to see how your dotfiles are different from your staging directory.
+If you want to update your personal repo based on this, you can see what's in the checked out personal repo under `~/.punto/repositories` and commit those changes.
 
 === Update
 
@@ -129,3 +140,14 @@ This copies over contents from a newly staged directory to your home directory.
 ----
 punto update
 ----
+
+The output is
+
+[source]
+----
+include::../../../build/output/update.txt[]
+----
+
+That's it. You're set to go.
+You might have to reload your shell for the changes to take effect.
+

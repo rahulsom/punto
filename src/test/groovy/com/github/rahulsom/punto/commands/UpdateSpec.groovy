@@ -1,6 +1,10 @@
 package com.github.rahulsom.punto.commands
 
 import com.github.rahulsom.punto.config.PuntoConfig
+import com.github.rahulsom.punto.utils.ExecUtil
+import org.junit.Rule
+import org.springframework.boot.test.OutputCapture
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import java.nio.file.Files
@@ -9,6 +13,9 @@ import static com.github.rahulsom.punto.commands.TestUtil.home
 import static com.github.rahulsom.punto.commands.TestUtil.stage
 
 class UpdateSpec extends Specification {
+
+    @Rule
+    OutputCapture capture = new OutputCapture()
 
     void 'only non ignored files are copied'() {
         given:
@@ -39,4 +46,20 @@ class UpdateSpec extends Specification {
         !new File("$userHome/.git").exists()
     }
 
+    void 'diff output is correct'() {
+        given:
+        def USERHOME = TestUtil.setupHome(this.class.getResourceAsStream('/sample.punto.yaml').text)
+
+        when:
+        App.main('update', '-c', "${USERHOME}/punto.yaml")
+        def stageOutput = capture.toString()
+        new File("build/output/update.txt").text = stageOutput.replace(USERHOME, "~")
+
+        then:
+        stageOutput.replace(USERHOME, "~") == '''\
+                ... Dotfiles Staged in ~/.punto/staging
+                ... Dotfiles Updated in ~
+                '''.stripIndent()
+
+    }
 }

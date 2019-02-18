@@ -86,25 +86,17 @@ class StageSpec extends Specification {
 
     void 'Creates copy when two repos exists'() {
         given:
-        def configFile = new File('/tmp/foo.yaml')
-        def userHome = Files.createTempDirectory("userhome")
-
-        def USERHOME = userHome.toAbsolutePath().toString()
-
-        configFile.text = """\
-            userHome: ${USERHOME}
-            puntoHome: ${USERHOME}/.punto
-        """.stripIndent() + "\n" + this.class.getResourceAsStream('/sample.punto.yaml').text
+        def USERHOME = TestUtil.setupHome(this.class.getResourceAsStream('/sample.punto.yaml').text)
 
         when:
-        App.main('stage', '-c', configFile.absolutePath)
+        App.main('stage', '-c', "${USERHOME}/punto.yaml")
         def output = capture.toString()
         new File("build/output/stage.txt").text = output.replace(USERHOME, "~")
 
         then:
         output.contains("... Dotfiles Staged in ${USERHOME}/.punto/staging")
 
-        userHome.toFile().list().toList() == ['.punto']
+        new File(USERHOME).list().toList().toSorted() == ['.punto', 'punto.yaml']
         new File("${USERHOME}/.punto/staging").exists()
         new File("${USERHOME}/.punto/repositories").exists()
         new File("${USERHOME}/.punto/repositories").list().length == 2

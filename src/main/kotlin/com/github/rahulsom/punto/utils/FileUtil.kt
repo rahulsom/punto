@@ -12,23 +12,17 @@ object FileUtil {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    private fun copyFiles(
-        effectiveIncludes: Set<Path>,
-        replaceString: String,
-        withString: String,
-        puntoHome: String,
-        userHome: String
-    ) =
-        effectiveIncludes
+    private fun copyFiles(includes: Set<Path>, find: String, replace: String, puntoHome: String, userHome: String) =
+        includes
             .forEach { path ->
                 val dest = path.toString()
-                    .replace(replaceString, withString)
+                    .replace(find, replace)
                     .replace("//", "/")
                     .replace(Regex("/$"), "")
-                val relativePath = path.toString().replace("$replaceString/", "")
+                val relativePath = path.toString().replace("$find/", "")
 
-                val sourceHome = replaceString.replace(puntoHome, "\$PUNTOHOME")
-                val destHome = withString.replace(userHome, "\$HOME").replace(Regex("/$"), "")
+                val sourceHome = find.replace(puntoHome, "\$PUNTOHOME")
+                val destHome = replace.replace(userHome, "\$HOME").replace(Regex("/$"), "")
                 logger.debug("    -> cp {$sourceHome,$destHome}/$relativePath")
                 File(dest).parentFile.mkdirs()
                 Files.copy(path, Paths.get(dest), REPLACE_EXISTING)
@@ -50,20 +44,14 @@ object FileUtil {
             }
 
     @JvmStatic
-    fun copy(
-        source: String,
-        destination: String,
-        includes: List<String>,
-        puntoHome: String,
-        userHome: String
-    ) {
+    fun copy(source: String, destination: String, includes: List<String>, puntoHome: String, userHome: String) {
         logger.info("copy from $source to $destination. includes: $includes")
         val files = mutableSetOf<Path>()
         val excluded = mutableSetOf<Path>()
         val repoHome = Paths.get(source)
 
         val (excludeOnlyPatterns, includeOnlyPatterns) =
-                includes.partition { it.startsWith("!") }
+            includes.partition { it.startsWith("!") }
 
         applyIncludes(repoHome, files, includeOnlyPatterns)
         applyExcludes(repoHome, excluded, excludeOnlyPatterns.map { it.substring(1) })
@@ -75,15 +63,14 @@ object FileUtil {
     class CopyVisitor(private val pathMatcher: PathMatcher, private val paths: MutableSet<Path>) :
         SimpleFileVisitor<Path>() {
 
-        override fun visitFile(path: Path, attrs: BasicFileAttributes) =
-            CONTINUE
-                .also {
-                    if (pathMatcher.matches(path)) {
-                        paths.add(path)
-                    }
-                }
+        override fun visitFile(path: Path, attrs: BasicFileAttributes): FileVisitResult {
+            if (pathMatcher.matches(path)) {
+                paths.add(path)
+            }
+            return CONTINUE
+        }
 
-        override fun visitFileFailed(file: Path, exc: IOException?) = CONTINUE
+        override fun visitFileFailed(file: Path, exc: IOException) = CONTINUE
     }
 
     @JvmStatic
@@ -91,9 +78,7 @@ object FileUtil {
         val excluded = skip
             .filter { excluded -> excluded.startsWith(name) }
             .map { "--exclude=${it.replace(Regex("^$name"), "")}" }
-        val command = listOf("rsync", "-arv") +
-                excluded +
-                listOf("$from/$name/", "$to/$name/")
+        val command = listOf("rsync", "-arv") + excluded + listOf("$from/$name/", "$to/$name/")
         ExecUtil.exec(File(from), *command.toTypedArray())
     }
 

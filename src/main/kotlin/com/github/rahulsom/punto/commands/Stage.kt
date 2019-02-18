@@ -101,6 +101,8 @@ class Stage : Runnable {
         if (!repoDir.exists()) {
             repoDir.parentFile.mkdirs()
             exec(repoDir.parentFile, "git", "clone", url, repoDir.absolutePath)
+        } else {
+            exec(repoDir, "git", "clean", "-fdqx")
         }
 
         return exec(repoDir, "git", "fetch", "--all")

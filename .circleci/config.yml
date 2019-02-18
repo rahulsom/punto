@@ -66,5 +66,5 @@ workflows:
     jobs:
       - build:
           filters:
-            tags:
-              only: /.*/
+            branches:
+              only: /^(gh-pages)/

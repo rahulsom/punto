@@ -49,6 +49,7 @@ class Update : Runnable {
                 }
             }
         }
+        println("... Dotfiles Updated in ${config.userHome}")
     }
 
 }

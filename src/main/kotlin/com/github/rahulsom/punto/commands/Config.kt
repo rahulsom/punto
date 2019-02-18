@@ -46,15 +46,11 @@ class Config : Runnable {
             mapParam(sb, "branch", repository.branch)
             mapParam(sb, "into", repository.into)
 
-            when {
-                repository.include.isNotEmpty() -> {
-                    val includes = repository.include.joinToString(", ") { "'$it'" }
-                    sb.append("""
-                        |) {
-                        |    include $includes
-                        |}""".trimMargin())
-                }
+            if (repository.include.isNotEmpty()) {
+                val includes = repository.include.joinToString(", ") { "'$it'" }
+                sb.append(listOf(") {", "    include $includes", "}").joinToString("\n"))
             }
+
             return sb.toString()
         }
 

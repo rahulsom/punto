@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit
 
 object ExecUtil {
 
-    data class ProcessReturn(val out: String, val err: String)
+    data class ProcessReturn(val out: String, val err: String, val workingDir: File, val command: List<String>)
 
     private val logger = LoggerFactory.getLogger(javaClass.canonicalName)
 
@@ -25,6 +25,6 @@ object ExecUtil {
 
         process.waitFor(60, TimeUnit.SECONDS)
 
-        return ProcessReturn(out.readText(), err.readText())
+        return ProcessReturn(out.readText(), err.readText(), workingDir, command.toList())
     }
 }

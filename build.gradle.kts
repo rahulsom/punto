@@ -1,6 +1,6 @@
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.asciidoctor.gradle.AsciidoctorTask
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 buildscript {
     configurations.classpath {
@@ -26,7 +26,7 @@ repositories {
 }
 
 val picocli: Configuration by configurations.creating
-val distro by configurations.creating
+val distro: Configuration by configurations.creating
 
 sourceSets {
     main {
@@ -54,9 +54,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:1.7.25")
 
     runtime("org.graalvm.sdk:graal-sdk:$graalVersion")
-    runtime("com.oracle.substratevm:svm:$graalVersion") {
-        exclude("com.oracle.substratevm", "svm-hosted-native-windows-amd64")
-    }
+    runtime("com.oracle.substratevm:svm:$graalVersion")
     runtime("ch.qos.logback:logback-classic:1.2.+")
     runtime("org.fusesource.jansi:jansi:1.9")
 
@@ -156,7 +154,7 @@ val runNative: Task  by tasks.creating {
 
 tasks.getByName("shadowJar").dependsOn("createPicocliJson")
 
-val storeVersion by tasks.creating {
+val storeVersion: Task by tasks.creating {
     inputs.property("version", project.version.toString())
     outputs.file("build/generatedSrc/kotlin/com/github/rahulsom/punto/VersionProvider.kt")
 
@@ -266,7 +264,11 @@ bintray {
         publicDownloadNumbers = true
 
         setLicenses("GPL-3.0")
-        vcsUrl = "https://github.com/bintray/gradle-bintray-plugin.git"
+        vcsUrl = "https://github.com/rahulsom/punto.git"
+        websiteUrl = "https://github.com/rahulsom/punto"
+        issueTrackerUrl = "https://github.com/rahulsom/punto/issues"
+        githubRepo = "rahulsom/punto"
+        githubReleaseNotesFile = "CHANGELOG.md"
     }
 
     setConfigurations("distro")
@@ -291,11 +293,14 @@ tasks.getByName("testClasses").doLast {
 tasks.getByName("test").outputs.dirs("build/output", "build/resources/test")
 
 tasks.withType<AsciidoctorTask> {
-    attributes(mapOf(
-        "toc" to "left",
-        "icons" to "font",
-        "docinfo" to "shared"
-    ))
+    attributes(
+        mapOf(
+            "toc" to "left",
+            "icons" to "font",
+            "docinfo" to "shared",
+            "nofooter" to ""
+        )
+    )
     inputs.dir("build/output")
     dependsOn("test")
 }
