@@ -1,3 +1,4 @@
+import org.apache.commons.codec.digest.DigestUtils
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.asciidoctor.gradle.AsciidoctorTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -5,6 +6,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 buildscript {
     configurations.classpath {
         resolutionStrategy.activateDependencyLocking()
+    }
+    dependencies {
+        classpath("commons-codec:commons-codec:1.12")
     }
 }
 
@@ -237,7 +241,33 @@ val zip by tasks.creating(Zip::class) {
     from("$buildDir/native")
 }
 
-tasks.getByName("build").dependsOn(zip)
+val createBrewFormula: Task by tasks.creating {
+    dependsOn(zip)
+
+    doLast {
+        val sha = DigestUtils("SHA-256").digestAsHex(zip.outputs.files.singleFile)
+        project.file("$buildDir/punto.rb").writeText(
+            """
+            |class Punto < Formula
+            |  desc "Composable Dotfile Manager"
+            |  homepage "https://rahulsom.github.io/punto/"
+            |  url "https://bintray.com/api/ui/download/rahulsom/punto/punto/${project.version}/punto-${project.version}.zip"
+            |  sha256 "$sha"
+            |
+            |  def install
+            |    bin.install "macos/punto"
+            |  end
+            |
+            |  test do
+            |    system "#{bin}/punto", "--version"
+            |  end
+            |end
+            """.trimMargin()
+        )
+    }
+}
+
+tasks.getByName("build").dependsOn(zip, createBrewFormula)
 
 buildScan {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"

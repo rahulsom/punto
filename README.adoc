@@ -13,3 +13,20 @@ Punto aims to bring composability to dotfiles.
 . Checkout the code
 . Switch JDK to graalvm
 . Run `./gradlew build`
+
+== Releasing
+
+[source,bash]
+----
+./gradlew final -Prelease.scope=major|minor|patch
+cp build/punto.rb /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula
+cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula
+git branch -D punto
+git push rahulsom :punto
+git checkout -b punto
+git add .
+git commit -m "Upgrade punto version"
+git push rahulsom punto
+git checkout master
+cd -
+----
