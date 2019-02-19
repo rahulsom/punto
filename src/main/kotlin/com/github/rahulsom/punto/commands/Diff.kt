@@ -7,7 +7,8 @@ import com.github.rahulsom.punto.utils.FileUtil.copyDirectory
 import com.github.rahulsom.punto.utils.FileUtil.copyFile
 import com.github.rahulsom.punto.utils.StatusLine
 import org.slf4j.LoggerFactory
-import picocli.CommandLine.*
+import picocli.CommandLine.Command
+import picocli.CommandLine.Mixin
 import java.io.File
 
 @Command(name = "diff", description = ["Computes diff between staging and current"])
@@ -72,17 +73,16 @@ class Diff : Runnable {
                 .forEach { file ->
                     when {
                         file.isDirectory -> copyDirectory(config.userHome, stagingDir, file.name, skip)
-                        else -> copyFile(config.userHome, "${config.puntoHome}/repositories/$personalRepo",
-                            file.toRelativeString(File(config.userHome)))
+                        else -> copyFile(
+                            config.userHome, "${config.puntoHome}/repositories/$personalRepo",
+                            file.toRelativeString(File(config.userHome))
+                        )
                     }
                 }
 
             if (changes.isNotEmpty()) {
                 println("... Diff updated in $stagingDir and ${config.puntoHome}/repositories/$personalRepo")
             }
-
         }
     }
-
-
 }

@@ -26,7 +26,6 @@ sealed class StatusLine {
                     }
                 } ?: Error
     }
-
 }
 
 operator fun Regex.contains(text: CharSequence): Boolean = this.matches(text)

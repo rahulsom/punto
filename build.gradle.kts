@@ -23,6 +23,7 @@ plugins {
     id("com.jfrog.bintray") version "1.8.4"
     id("org.asciidoctor.convert") version "1.5.9.2"
     id("org.ajoberstar.git-publish") version "2.0.0"
+    id("org.jlleitschuh.gradle.ktlint") version "7.1.0"
 }
 
 repositories {
@@ -260,6 +261,9 @@ val createBrewFormula: Task by tasks.creating {
             |
             |  test do
             |    system "#{bin}/punto", "--version"
+            |    system "curl", "-s", "https://raw.githubusercontent.com/rahulsom/punto/master/src/test/resources/sample.punto.yaml", "-o", "/tmp/punto.yml"
+            |    system "#{bin}/punto", "config", "-c", "/tmp/punto.yml"
+            |    system "rm", "/tmp/punto.yml"
             |  end
             |end
             """.trimMargin()

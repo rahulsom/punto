@@ -7,8 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.0] - Unreleased
 Tagline TBD
 
-### Infrastructure
+### Build Infrastructure
 - Automate generation of brew formula
+- KtLint the code
 
 ## 0.1.0 - 2019-02-17
 Hello World

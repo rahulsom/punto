@@ -44,5 +44,4 @@ class Task(val identifier: String, val code: () -> Unit) {
         dependencies.forEach { it.runTree() }
         run()
     }
-
 }

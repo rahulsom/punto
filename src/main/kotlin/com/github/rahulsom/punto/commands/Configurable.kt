@@ -4,8 +4,8 @@ import com.github.rahulsom.punto.config.PuntoConfig
 import org.slf4j.LoggerFactory
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
-import picocli.CommandLine.*
 import picocli.CommandLine.Help.Visibility.ALWAYS
+import picocli.CommandLine.Option
 import java.io.File
 import java.io.FileInputStream
 

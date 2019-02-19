@@ -1,8 +1,10 @@
 package com.github.rahulsom.punto.config
 
-import com.github.rahulsom.punto.config.RepoType.*
+import com.github.rahulsom.punto.config.RepoType.gist
+import com.github.rahulsom.punto.config.RepoType.git
+import com.github.rahulsom.punto.config.RepoType.github
 import java.security.MessageDigest
-import java.util.*
+import java.util.UUID
 
 open class PuntoConfig {
     var userHome: String = System.getProperty("user.home")
@@ -38,7 +40,6 @@ open class Repository {
             .replace(Regex("^git@"), "")
             .replace(Regex("\\.git$"), "")
             .replace(Regex(":"), "/")
-
 }
 
 fun String.sha1() = MessageDigest
