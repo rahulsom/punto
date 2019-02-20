@@ -7,10 +7,17 @@ import java.security.MessageDigest
 import java.util.UUID
 
 open class PuntoConfig {
-    var userHome: String = System.getProperty("user.home")
-    var puntoHome: String = "$userHome/.punto"
+    var userHome: String? = null // System.getProperty("user.home")
+    var puntoHome: String? = null // "$userHome/.punto"
     var repositories: MutableList<Repository> = mutableListOf()
     var ignore: ArrayList<String> = ArrayList()
+
+    fun withDefaults() = PuntoConfig().also { config ->
+        config.userHome = this.userHome ?: System.getProperty("user.home")
+        config.puntoHome = this.puntoHome ?: "${config.userHome}/.punto"
+        config.repositories = this.repositories
+        config.ignore = this.ignore
+    }
 }
 
 enum class RepoType {

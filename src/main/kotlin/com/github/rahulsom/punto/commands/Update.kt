@@ -17,7 +17,7 @@ class Update : Runnable {
     lateinit var configurable: Configurable
 
     override fun run() {
-        val config = configurable.getConfig() ?: return
+        val config = configurable.getConfig()?.withDefaults() ?: return
 
         Stage().also { it.configurable = configurable }.run()
 
@@ -44,8 +44,8 @@ class Update : Runnable {
             val file = File(config.userHome, name)
             if (file.exists()) {
                 when {
-                    file.isDirectory -> FileUtil.copyDirectory(stagingDir, config.userHome, name, skip)
-                    else -> FileUtil.copyFile(stagingDir, config.userHome, name)
+                    file.isDirectory -> FileUtil.copyDirectory(stagingDir, config.userHome!!, name, skip)
+                    else -> FileUtil.copyFile(stagingDir, config.userHome!!, name)
                 }
             }
         }
