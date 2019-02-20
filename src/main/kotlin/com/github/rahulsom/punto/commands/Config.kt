@@ -15,7 +15,7 @@ class Config : Runnable {
     override fun run() {
         logger.info("Running config")
 
-        val config = configurable.getConfig() ?: return
+        val config = configurable.getConfig()?.withDefaults() ?: return
 
         println("userHome '${config.userHome}'")
         println("puntoHome '${config.puntoHome}'")

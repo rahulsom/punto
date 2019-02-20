@@ -20,7 +20,7 @@ class Stage : Runnable {
     lateinit var configurable: Configurable
 
     override fun run() {
-        val config = configurable.getConfig() ?: return
+        val config = configurable.getConfig()?.withDefaults() ?: return
 
         logger.info("Running stage")
         val graph = Graph()
@@ -86,8 +86,8 @@ class Stage : Runnable {
         checkoutTask.dependsOn(cloneTask)
         val copyTask = graph.createTask("copy from ${repository.identifier}") {
             val destination = "$stagingDir/${repository.into ?: ""}"
-            FileUtil.copy(localRepo, destination, repository.include, config.puntoHome, config.userHome)
-            commitFiles(config.puntoHome, repository, stagingDir)
+            FileUtil.copy(localRepo, destination, repository.include, config.puntoHome!!, config.userHome!!)
+            commitFiles(config.puntoHome!!, repository, stagingDir)
         }
         copyTask.dependsOn(setupStaging)
         copyTask.dependsOn(checkoutTask)

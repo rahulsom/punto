@@ -59,7 +59,7 @@ class ConfigSpec extends Specification {
 
         then:
         output.contains("userHome '/tmp/loc1'")
-        output.contains("puntoHome '${System.getProperty('user.home')}/.punto'")
+        output.contains("puntoHome '/tmp/loc1/.punto'")
     }
 
     void 'print puntoHome correctly'() {

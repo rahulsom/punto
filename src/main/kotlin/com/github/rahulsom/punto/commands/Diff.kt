@@ -20,7 +20,7 @@ class Diff : Runnable {
     lateinit var configurable: Configurable
 
     override fun run() {
-        val config = configurable.getConfig() ?: return
+        val config = configurable.getConfig()?.withDefaults() ?: return
 
         Stage().also { it.configurable = configurable }.run()
 
@@ -47,8 +47,8 @@ class Diff : Runnable {
             val file = File(config.userHome, name)
             if (file.exists()) {
                 when {
-                    file.isDirectory -> copyDirectory(config.userHome, stagingDir, name, skip)
-                    else -> copyFile(config.userHome, stagingDir, name)
+                    file.isDirectory -> copyDirectory(config.userHome!!, stagingDir, name, skip)
+                    else -> copyFile(config.userHome!!, stagingDir, name)
                 }
             }
         }
@@ -72,9 +72,9 @@ class Diff : Runnable {
             changes
                 .forEach { file ->
                     when {
-                        file.isDirectory -> copyDirectory(config.userHome, stagingDir, file.name, skip)
+                        file.isDirectory -> copyDirectory(config.userHome!!, stagingDir, file.name, skip)
                         else -> copyFile(
-                            config.userHome, "${config.puntoHome}/repositories/$personalRepo",
+                            config.userHome!!, "${config.puntoHome}/repositories/$personalRepo",
                             file.toRelativeString(File(config.userHome))
                         )
                     }
