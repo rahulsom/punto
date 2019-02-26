@@ -1,6 +1,8 @@
 package com.github.rahulsom.punto.config
 
-import com.github.rahulsom.punto.config.PadMode.*
+import com.github.rahulsom.punto.config.PadMode.Both
+import com.github.rahulsom.punto.config.PadMode.Left
+import com.github.rahulsom.punto.config.PadMode.Right
 import org.jparsec.Parser
 import org.jparsec.Parsers
 import org.jparsec.Scanners
