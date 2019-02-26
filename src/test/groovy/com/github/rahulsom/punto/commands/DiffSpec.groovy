@@ -73,7 +73,7 @@ class DiffSpec extends Specification {
 
         then:
         stagingStatus.err.trim() == "M .screenrc"
-        personalStatus.err.trim() == "M .screenrc"
+        personalStatus.err.trim() == "?? .screenrc"
         diffOutput.replace(USERHOME, "~") == '''\
                 ... Dotfiles Staged in ~/.punto/staging
                 ... Diff updated in ~/.punto/staging and ~/.punto/repositories/github.com/rahulsom/dotfiles
