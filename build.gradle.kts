@@ -57,6 +57,7 @@ dependencies {
     implementation("info.picocli:picocli:3.8.2")
     implementation("org.yaml:snakeyaml:1.23")
     implementation("org.slf4j:slf4j-api:1.7.25")
+    implementation("org.jparsec:jparsec:3.1")
 
     runtime("org.graalvm.sdk:graal-sdk:$graalVersion")
     runtime("com.oracle.substratevm:svm:$graalVersion")
