@@ -293,6 +293,8 @@ bintray {
     user = bintrayUser
     key = bintrayKey
 
+    publish = true
+
     pkg = PackageConfig().apply {
         userOrg = bintrayUser
         repo = "punto"
