@@ -1,3 +1,4 @@
+import org.ajoberstar.grgit.Grgit
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.asciidoctor.gradle.AsciidoctorTask
@@ -321,7 +322,12 @@ tasks.getByName("final").dependsOn("bintrayUpload", "gitPublishPush")
 tasks.getByName("candidate").dependsOn("bintrayUpload")
 
 tasks.getByName("bintrayUpload").doLast {
-    println("\n\nVisit https://bintray.com/beta/#/$bintrayUser/punto/punto?tab=overview to publish")
+    val tap = Grgit.clone(mapOf("dir" to "build/homebrew", "uri" to "git@github.com:rahulsom/homebrew-rahulsom.git"))
+    file("build/homebrew/Formula/punto.rb").writeText(file("build/punto.rb").readText())
+    tap.add(mapOf("patterns" to listOf("punto.rb")))
+    tap.commit(mapOf("message" to "Update punto to ${version}"))
+    tap.push()
+    tap.close()
 }
 
 tasks.getByName("testClasses").doLast {
