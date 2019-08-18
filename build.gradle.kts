@@ -238,8 +238,8 @@ val buildLinuxVersion by tasks.creating(Exec::class) {
 val zip by tasks.creating(Zip::class) {
     dependsOn(nativeImage, buildLinuxVersion)
 
-    archiveName = "punto-$version.zip"
-    destinationDir = file("$buildDir/dist")
+    archiveFileName.set("punto-${project.version}.zip")
+    destinationDirectory.set(file("$buildDir/dist"))
 
     from("$buildDir/native")
 }
