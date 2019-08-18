@@ -45,10 +45,11 @@ dependencyLocking {
     lockAllConfigurations()
 }
 
-val vmName: String = System.getProperty("java.vm.name", "GraalVM 1.0.0-rc11")
+val vmName: String = System.getProperty("java.vm.name", "GraalVM CE 19.1.1")
+println("VM Name: $vmName")
 val graalVersion =
     when {
-        vmName.contains("GraalVM") -> vmName.split(" ")[1]
+        vmName.contains("GraalVM") -> vmName.split(" ").last()
         else -> "+"
     }
 
