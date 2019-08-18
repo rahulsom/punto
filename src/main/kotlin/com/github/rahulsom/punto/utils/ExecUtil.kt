@@ -2,8 +2,7 @@ package com.github.rahulsom.punto.utils
 
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeUnit.*
+import java.util.concurrent.TimeUnit.SECONDS
 
 object ExecUtil {
 

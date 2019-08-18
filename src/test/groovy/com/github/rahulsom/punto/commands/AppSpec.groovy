@@ -48,7 +48,7 @@ class AppSpec extends Specification {
         def output = capture.toString()
 
         then:
-        output.contains('Unknown option: -badOption')
+        output.contains("Unknown option: '-badOption'")
         output.contains('Usage: punto [-hV]')
         output.contains('Manages dotfiles.')
         output.contains('Show this help message and exit.')
