@@ -98,7 +98,7 @@ val createScripts by tasks.creating {
         commandParts = listOf(
             "native-image",
             "-H:+ReportUnsupportedElementsAtRuntime",
-            "-H:IncludeResources='/logback.xml,/ignores.txt'",
+            "-H:IncludeResources='logback.xml|ignores.txt'",
             "-H:ReflectionConfigurationFiles=$graalFiles",
             "-H:+JNI",
             "--no-server",
