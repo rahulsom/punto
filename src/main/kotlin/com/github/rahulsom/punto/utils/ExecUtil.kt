@@ -3,6 +3,7 @@ package com.github.rahulsom.punto.utils
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.*
 
 object ExecUtil {
 
@@ -12,6 +13,9 @@ object ExecUtil {
 
     @JvmStatic
     fun exec(workingDir: File, vararg command: String): ProcessReturn {
+        if (System.getProperty("java.io.tmpdir", "") == "") {
+            System.setProperty("java.io.tmpdir", "/tmp")
+        }
         val out = File.createTempFile("punto", "out.txt")
         val err = File.createTempFile("punto", "err.txt")
 
@@ -23,7 +27,7 @@ object ExecUtil {
             .redirectOutput(ProcessBuilder.Redirect.to(err))
             .start()
 
-        process.waitFor(60, TimeUnit.SECONDS)
+        process.waitFor(60, SECONDS)
 
         return ProcessReturn(out.readText(), err.readText(), workingDir, command.toList())
     }
