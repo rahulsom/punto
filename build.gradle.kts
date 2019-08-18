@@ -318,21 +318,27 @@ artifacts {
     add("distro", zip)
 }
 
-tasks.getByName("final").dependsOn("bintrayUpload", "gitPublishPush")
-tasks.getByName("candidate").dependsOn("bintrayUpload")
+tasks.getByName("final")
+    .dependsOn("bintrayUpload", "gitPublishPush")
+tasks.getByName("candidate")
+    .dependsOn("bintrayUpload")
 
-tasks.getByName("bintrayUpload").doLast {
-    val tap = Grgit.clone(mapOf("dir" to "build/homebrew", "uri" to "git@github.com:rahulsom/homebrew-rahulsom.git"))
-    file("build/homebrew/Formula/punto.rb").writeText(file("build/punto.rb").readText())
-    tap.add(mapOf("patterns" to listOf("punto.rb")))
-    tap.commit(mapOf("message" to "Update punto to ${version}"))
-    tap.push()
-    tap.close()
-}
+tasks.getByName("final")
+    .doLast {
+        if (file("build/homebrew").exists()) {
+            file("build/homebrew").deleteRecursively()
+        }
+        val tap =
+            Grgit.clone(mapOf("dir" to "build/homebrew", "uri" to "git@github.com:rahulsom/homebrew-rahulsom.git"))
+        file("build/homebrew/Formula/punto.rb").writeText(file("build/punto.rb").readText())
+        tap.add(mapOf("patterns" to listOf("punto.rb")))
+        tap.commit(mapOf("message" to "Update punto to ${version}"))
+        tap.push()
+        tap.close()
+    }
 
-tasks.getByName("testClasses").doLast {
-    project.file("build/output").mkdirs()
-}
+tasks.getByName("testClasses")
+    .doLast { project.file("build/output").mkdirs() }
 
 tasks.getByName("test").outputs.dirs("build/output", "build/resources/test")
 
@@ -358,4 +364,5 @@ gitPublish {
     }
 }
 
-tasks.getByName("gitPublishCopy").dependsOn("asciidoctor")
+tasks.getByName("gitPublishCopy")
+    .dependsOn("asciidoctor")
