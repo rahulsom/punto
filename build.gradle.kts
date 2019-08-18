@@ -102,6 +102,7 @@ val createScripts by tasks.creating {
             "-H:ReflectionConfigurationFiles=$graalFiles",
             "-H:+JNI",
             "--no-server",
+            "--allow-incomplete-classpath",
             "-jar",
             shadowJarTask.outputs.files.singleFile.absolutePath.replace(projectDir.absolutePath + "/", "")
         )
