@@ -12,11 +12,9 @@ object ExecUtil {
 
     @JvmStatic
     fun exec(workingDir: File, vararg command: String): ProcessReturn {
-        if (System.getProperty("java.io.tmpdir", "") == "") {
-            System.setProperty("java.io.tmpdir", "/tmp")
-        }
-        val out = File.createTempFile("punto", "out.txt")
-        val err = File.createTempFile("punto", "err.txt")
+        val tmpDir = File(System.getProperty("java.io.tmpdir", "/tmp"))
+        val out = File.createTempFile("punto", "out.txt", tmpDir)
+        val err = File.createTempFile("punto", "err.txt", tmpDir)
 
         logger.debug("exec(workingDir: $workingDir, command: ${command.toList()})")
 
