@@ -63,7 +63,7 @@ dependencies {
     runtime("org.graalvm.sdk:graal-sdk:$graalVersion")
     runtime("com.oracle.substratevm:svm:$graalVersion")
     runtime("ch.qos.logback:logback-classic:1.2.+")
-    runtime("org.fusesource.jansi:jansi:1.9")
+    runtime("org.fusesource.jansi:jansi:1.18")
 
     picocli("info.picocli:picocli-codegen:3.8.2")
 
