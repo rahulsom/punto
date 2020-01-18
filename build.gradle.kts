@@ -68,7 +68,7 @@ dependencies {
     picocli("info.picocli:picocli-codegen:3.8.2")
 
     testImplementation("org.codehaus.groovy:groovy-all:2.5.+")
-    testImplementation("org.spockframework:spock-core:1.2-groovy-2.5")
+    testImplementation("org.spockframework:spock-core:1.3-groovy-2.5")
     testImplementation("org.springframework.boot:spring-boot:1.2.1.RELEASE")
     testImplementation("org.apache.commons:commons-text:1.6")
 }
