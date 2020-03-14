@@ -18,7 +18,7 @@ plugins {
     id("me.champeau.buildscan-recipes") version "0.2.3"
     application
     id("groovy")
-    id("nebula.release") version "9.1.0"
+    id("nebula.release") version "14.1.0"
     id("org.jetbrains.kotlin.jvm") version "1.3.11"
     id("com.github.johnrengelman.shadow") version "4.0.3"
     id("com.jfrog.bintray") version "1.8.4"
