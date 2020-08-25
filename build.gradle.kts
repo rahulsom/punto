@@ -24,7 +24,7 @@ plugins {
     id("com.jfrog.bintray") version "1.8.4"
     id("org.asciidoctor.convert") version "1.5.9.2"
     id("org.ajoberstar.git-publish") version "2.0.0"
-    id("org.jlleitschuh.gradle.ktlint") version "7.1.0"
+    id("org.jlleitschuh.gradle.ktlint") version "9.3.0"
 }
 
 repositories {
