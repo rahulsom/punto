@@ -9,7 +9,7 @@ buildscript {
         resolutionStrategy.activateDependencyLocking()
     }
     dependencies {
-        classpath("commons-codec:commons-codec:1.12")
+        classpath("commons-codec:commons-codec:1.15")
     }
 }
 
