@@ -20,7 +20,7 @@ plugins {
     id("groovy")
     id("nebula.release") version "9.1.0"
     id("org.jetbrains.kotlin.jvm") version "1.3.11"
-    id("com.github.johnrengelman.shadow") version "4.0.3"
+    id("com.github.johnrengelman.shadow") version "4.0.4"
     id("com.jfrog.bintray") version "1.8.4"
     id("org.asciidoctor.convert") version "1.5.9.2"
     id("org.ajoberstar.git-publish") version "2.0.0"
