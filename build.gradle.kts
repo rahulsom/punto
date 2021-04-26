@@ -14,7 +14,7 @@ buildscript {
 }
 
 plugins {
-    id("com.gradle.build-scan") version "2.1"
+    id("com.gradle.build-scan") version "2.4.2"
     id("me.champeau.buildscan-recipes") version "0.2.3"
     application
     id("groovy")
