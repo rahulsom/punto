@@ -65,7 +65,7 @@ dependencies {
     runtime("ch.qos.logback:logback-classic:1.2.+")
     runtime("org.fusesource.jansi:jansi:1.9")
 
-    picocli("info.picocli:picocli-codegen:3.8.2")
+    picocli("info.picocli:picocli-codegen:4.6.1")
 
     testImplementation("org.codehaus.groovy:groovy-all:2.5.+")
     testImplementation("org.spockframework:spock-core:1.2-groovy-2.5")
