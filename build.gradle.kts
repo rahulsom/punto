@@ -57,7 +57,7 @@ val graalVersion =
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("info.picocli:picocli:3.8.2")
-    implementation("org.yaml:snakeyaml:1.23")
+    implementation("org.yaml:snakeyaml:1.29")
     implementation("org.slf4j:slf4j-api:1.7.25")
 
     runtime("org.graalvm.sdk:graal-sdk:$graalVersion")
