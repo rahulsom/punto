@@ -69,7 +69,7 @@ dependencies {
 
     testImplementation("org.codehaus.groovy:groovy-all:2.5.+")
     testImplementation("org.spockframework:spock-core:1.2-groovy-2.5")
-    testImplementation("org.springframework.boot:spring-boot:1.2.1.RELEASE")
+    testImplementation("org.springframework.boot:spring-boot:2.5.0")
     testImplementation("org.apache.commons:commons-text:1.6")
 }
 
